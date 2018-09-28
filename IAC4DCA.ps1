@@ -11,7 +11,7 @@ $AzureIsAuthoritative = $true,
 $TenantRootId = 'b2a0bb8e-3f26-47f8-9040-209289b412a8' ,
 $TenantRootname = 'root',
 $TenantManagementGroupRoot = "M2",
-$vstsAAObjectID = (Get-AzureRmADServicePrincipal -SearchString 'iaac4dcm-cd4dcm-bb81881b-d6a7-4590-b14e-bb3c575e42c5').Id,
+$vstsAAObjectID = (Get-AzureRmADServicePrincipal -SearchString 'iaac4dcm-cd4dcm-M2').Id,
 $mgmtSubscriptionID= "bb81881b-d6a7-4590-b14e-bb3c575e42c5",
 [string]$managementgrouptofind = ""
 

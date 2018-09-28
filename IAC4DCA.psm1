@@ -1,5 +1,38 @@
 #Requires -Modules @{ModuleName="AzureRm.Resources";ModuleVersion="6.5.0"}
 
+
+if (Get-Module -ListAvailable -Name AzureRM.Subscription) {
+    Write-Host "Module exists - Subscription"
+} else {
+
+   Install-Module -Name AzureRM.Subscription -Force -Verbose -Scope CurrentUser 
+   
+}
+
+if (Get-Module -ListAvailable -Name AzureRM.Billing) {
+    Write-Host "Module exists - Billing"
+} else {
+
+  
+   Install-Module -Name Azurerm.Billing -Force -Verbose -Scope CurrentUser
+   
+}
+
+if (Get-Module -ListAvailable -Name AzureRm.Resources) {
+    Write-Host "Module exists - AzureRm.Resource"
+} else {
+
+  
+   Install-Module -Name Azurerm.Resources -Force -Verbose -Scope CurrentUser
+   
+}
+
+
+
+Import-Module AzureRM.ManagementGroups -Force
+
+
+
 function Move-LocalManagementGroupParentToSameAsInAzure(
     [string] $managementgroupname = "",        
     [string] $managementgrouplocalfolderpath = "",
