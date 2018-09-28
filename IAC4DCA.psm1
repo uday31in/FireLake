@@ -513,7 +513,7 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
 
     if($AzureIsAuthoritative)
     {
-        $effectivepath |% {
+        $effectivepath |? { (IsManagementGroup -name $_.fullname) -or (IsSubscription -name $_.fullname) } |% {
         
             [string]$effectiveScope = getScope (get-item $_.FullName)
             $currentDirectory = $_.FullName
@@ -552,7 +552,7 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
     else
     {
        
-        $effectivepath |% {
+        $effectivepath  |? { (IsManagementGroup -name $_.fullname) -or (IsSubscription -name $_.fullname) } |% {
         
             [string]$effectiveScope = getScope (get-item $_.FullName)
             $currentDirectory = $_.FullName
@@ -630,7 +630,7 @@ function Ensure-AzureRMPolicySetDefinition ($AzureIsAuthoritative = $true, $path
 
     if($AzureIsAuthoritative)
     {
-        $effectivepath |% {
+        $effectivepath|? { (IsManagementGroup -name $_.fullname) -or (IsSubscription -name $_.fullname) } |% {
         
             [string]$effectiveScope = getScope (get-item $_.FullName)
             $currentDirectory = $_.FullName
@@ -671,7 +671,7 @@ function Ensure-AzureRMPolicySetDefinition ($AzureIsAuthoritative = $true, $path
     else
     {
        
-        $effectivepath |% {
+        $effectivepath |? { (IsManagementGroup -name $_.fullname) -or (IsSubscription -name $_.fullname) } |% {
         
             [string]$effectiveScope = getScope (get-item $_.FullName)
             $currentDirectory = $_.FullName
