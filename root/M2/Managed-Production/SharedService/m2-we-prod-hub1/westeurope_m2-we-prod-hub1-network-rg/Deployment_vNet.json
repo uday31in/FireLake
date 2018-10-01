@@ -60,7 +60,7 @@
               "properties": {
                 "addressPrefix": "[parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].addressPrefix]",
                 "nextHopType": "[parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopType]",
-                "nextHopIpAddress": "[if(equals(parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopType,'Internet'),json('null'),parameters('vNetDefinition').tables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopIpAddress)]"
+                "nextHopIpAddress": "[if(equals(parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopType,'Internet'),json('null'),parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopIpAddress)]"
               }
             }
           }
