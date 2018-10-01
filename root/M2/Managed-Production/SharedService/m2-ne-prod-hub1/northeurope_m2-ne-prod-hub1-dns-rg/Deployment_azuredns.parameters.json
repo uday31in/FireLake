@@ -1,0 +1,43 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "hubsettings": {
+            "value": {
+                "dnszones":[
+                    {
+                        "name": "aadsdelegated.m2-aadds.local",
+                        "records":[
+                            {
+                                "type": "a",
+                                "name": "testrecord",
+                                "properties": {
+                                    "TTL": 3600,
+                                    "ARecords": [
+                                      {
+                                        "ipv4Address": "1.2.3.4"
+                                      },
+                                      {
+                                        "ipv4Address": "1.2.3.5"
+                                      }
+                                    ]
+                                  }
+                            },
+                            {
+                                "type": "CNAME",
+                                "name": "testcname",
+                                "properties": {
+                                    "TTL": 3600,
+                                    "CNAMERecord": {
+                                        "cname": "testrecord.aadsdelegated.m2-aadds.local"
+                                      }
+                                    }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+
+}
