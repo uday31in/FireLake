@@ -560,11 +560,11 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
 
             if(IsManagementGroup ($_.FullName))
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'}  
+                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
             }
             else
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'} 
+                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'  -and  ($_.SubscriptionId -eq ($effectiveScope -split '/' | select -last 1)) }
             }
 
             #Assignment that exists in Azure but not locally, should be deleted
@@ -590,6 +590,8 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
             #Push local assignments
             Get-ChildItem -file -Path $currentDirectory PolicyDefinition*.json |%{
                 
+                Write-Host "Filename : $($_.basename)"
+
                 $localassignment = get-content $_.FullName | ConvertFrom-Json
                 
                 [string]$policyname = ($_.basename).replace("PolicyDefinition_", "")
@@ -1034,7 +1036,7 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
                     }
                     elseif(Test-Path -Path "$($_.FullName.Replace($_.Extension,'')).parameters.json")
                     {
-                        (Test-Path -Path "$($_.FullName.Replace($_.Extension,'')).parameters.json")   
+                        $deploymentparameterfilename =  "$($_.FullName.Replace($_.Extension,'')).parameters.json"
                     }
                
                     if($deploymentparameterfilename -ne "")

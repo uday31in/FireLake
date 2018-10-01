@@ -1,0 +1,49 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "hubsettings": {
+            "value": {
+                "kvesttings": {
+                    "keyVaultName" : "m2-ne-prod-hub1-kv",
+                    "properties": {                        
+                        "enabledForDeployment": "true",
+                        "enabledForDiskEncryption": "true",
+                        "enabledForTemplateDeployment": "true",
+                        "tenantId": "b2a0bb8e-3f26-47f8-9040-209289b412a8",
+                        "accessPolicies": [
+                            {
+                                "tenantId": "b2a0bb8e-3f26-47f8-9040-209289b412a8",
+                                "objectId": "a3e38513-b8de-4176-9d80-f232c0fda633",
+                                "permissions": {
+                                    "keys": [
+                                        "list"
+                                    ],
+                                    "secrets": [
+                                        "list"
+                                    ]
+                                }
+                            },
+                            {
+                                "tenantId": "b2a0bb8e-3f26-47f8-9040-209289b412a8",
+                                "objectId": "b38a3dad-9e2d-4ed7-81be-6851bc292fa9",
+                                "permissions": {
+                                   
+                                    "secrets": [
+                                        "list",
+                                        "set"
+                                    ]
+                                }
+                            }
+                        ],
+                        "sku": {
+                            "name": "Standard",
+                            "family": "A"
+                        }                    
+                    }
+                }
+            }
+        }
+    }
+
+}
