@@ -1,59 +1,53 @@
 {
-	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-	"contentVersion": "1.0.0.0",
-	"parameters": {		
-		"rgName": {
+    "$schema": "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgName": {
             "type": "string",
-			"defaultvalue": "m2-storage"
+            "defaultvalue": "m2-storage"
         },
-		"rgLocation": {
+        "rgLocation": {
             "type": "string",
-			"defaultvalue": "westeurope"
-        },
-		"storageaccountname": {
-            "type": "string",
-			"defaultvalue": "westeurope"
+            "defaultvalue": "westeurope"
         }
-	},
-	"variables": {
-		
-	},
-	"resources": [
-		{
-		  "type": "Microsoft.Resources/resourceGroups",
-		  "apiVersion": "2018-05-01",
-		  "location": "[parameters('rgLocation')]",
-		  "name": "[parameters('rgName')]"
-		},
-	
-		{
-			"type": "Microsoft.Resources/deployments",
-			"name": "rg-nested",
-			"apiVersion": "2017-05-10",
-			"resourceGroup": "[parameters('rgName')]",
-			"dependsOn": [
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('rgLocation')]",
+            "name": "[parameters('rgName')]"
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "rg-nested",
+            "apiVersion": "2017-05-10",
+            "resourceGroup": "[parameters('rgName')]",
+            "dependsOn": [
                 "[concat('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
             ],
-			"properties": {
-				"template": {
-					"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-					"contentVersion": "1.0.0.0",
-					"parameters": {},
-					"variables": {},
-					"resources": [
-					{
-						"type": "Microsoft.Storage/storageAccounts",
-						"apiVersion": "2017-10-01",
-						"name": "[take(replace(subscription().subscriptionId,'-',''),24)]",
-						"location": "westeurope",
-						"kind": "StorageV2",
-						"sku": {
-							"name": "Standard_LRS"
-						}
-					}]
-				},
-				"mode": "Incremental"
-			}
-		}
-	]
+            "properties": {
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "apiVersion": "2017-10-01",
+                            "name": "[take(replace(subscription().subscriptionId,'-',''),24)]",
+                            "location": "westeurope",
+                            "kind": "StorageV2",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            }
+                        }
+                    ]
+                },
+                "mode": "Incremental"
+            }
+        }
+    ]
 }
