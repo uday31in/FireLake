@@ -125,6 +125,17 @@
                             "allowGatewayTransit": "false",
                             "useRemoteGateways": "false"
                         }
+                    },
+                    {
+                        "properties": {
+                            "remoteVirtualNetwork": {
+                                "id": "/subscriptions/c14f781e-159f-45b9-9538-56d9dd32d5e0/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1"
+                            },
+                            "allowVirtualNetworkAccess": "true",
+                            "allowForwardedTraffic": "true",
+                            "allowGatewayTransit": "false",
+                            "useRemoteGateways": "false"
+                        }
                     }
                 ],
                 "azureFirewalls": [
