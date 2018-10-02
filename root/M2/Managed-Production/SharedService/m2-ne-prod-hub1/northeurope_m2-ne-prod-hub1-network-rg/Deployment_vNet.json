@@ -25,7 +25,11 @@
       "true": "[parameters('vNetDefinition').virtualNetworkPeerings]",
       "false": [{
           "name": "peeringslookup",
-          "properties": {}
+          "properties": {
+            "remoteVirtualNetwork" :{
+              "id":"none"
+            }
+          }
       }]
     },
     "peerings": "[variables('peeringslookup')[string(greater(length(parameters('vNetDefinition').virtualNetworkPeerings), 0))]]",
@@ -153,7 +157,7 @@
           ]
         }
       }
-    },
+    },    
     {
       "type": "Microsoft.Resources/deployments", 
       "apiVersion": "2018-05-01",
