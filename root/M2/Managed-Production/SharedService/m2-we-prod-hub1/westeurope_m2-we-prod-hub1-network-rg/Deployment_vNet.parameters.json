@@ -11,14 +11,18 @@
           "10.2.5.4",
           "10.2.5.5"
         ],
-        "subnetlist": [
+         "subnetlist": [
           {
             "name": "m2-we-prod-hub1-er-gw",
-            "addressPrefix": "10.2.1.0/24"            
+            "properties": {
+              "addressPrefix": "10.2.1.0/24"
+            }
           },
           {
             "name": "m2-we-prod-hub1-vpn-gw",
-            "addressPrefix": "10.2.2.0/24",
+            "properties": {
+              "addressPrefix": "10.2.2.0/24"
+            },
             "virtualNetworkGateways": [
               {
                 "name": "vpngateway",
@@ -30,35 +34,46 @@
               }
             ]
           },
-          
           {
             "name": "AzureFirewallSubnet",
-            "addressPrefix": "10.2.3.0/24"
+            "properties": {
+              "addressPrefix": "10.2.3.0/24"
+            }
           },
           {
             "name": "m2-we-prod-hub1-firewall",
-            "addressPrefix": "10.2.4.0/24"
+            "properties": {
+              "addressPrefix": "10.2.4.0/24"
+            }
           },
-          {
-            "name": "m2-we-prod-hub1-aad-ds",
-            "addressPrefix": "10.2.5.0/24"
-          },
+       
           {
             "name": "m2-we-prod-hub1-ad-ds",
-            "addressPrefix": "10.2.6.0/24",
-            "routetablename": "m2-we-prod-hub1-ad-ds-routetable"
+            "properties": {
+              "addressPrefix": "10.2.6.0/24",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-we-prod-hub1-ad-ds-routetable')]"
+              }
+            }
           },
           {
             "name": "m2-we-prod-hub1-file-share",
-            "addressPrefix": "10.2.7.0/24"
-           
+            "properties": {
+              "addressPrefix": "10.2.7.0/24"
+            }
           },
           {
             "name": "m2-we-prod-hub1-jumpbox",
-            "addressPrefix": "10.2.8.0/24",
-            "routetablename": "m2-we-prod-hub1-jumpbox-routetable",
-            "nsgname": "m2-we-prod-hub1-jumpbox-nsg"
-          }      
+            "properties": {
+              "addressPrefix": "10.2.8.0/24",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-we-prod-hub1-jumpbox-nsg')]"
+              },
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-we-prod-hub1-jumpbox-routetable')]"
+              }
+            }
+          }
         ],
         "routeTables": [
           {

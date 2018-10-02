@@ -14,11 +14,15 @@
         "subnetlist": [
           {
             "name": "m2-ne-prod-hub1-er-gw",
-            "addressPrefix": "10.1.1.0/24"            
+            "properties": {
+              "addressPrefix": "10.1.1.0/24"
+            }
           },
           {
             "name": "m2-ne-prod-hub1-vpn-gw",
-            "addressPrefix": "10.1.2.0/24",
+            "properties": {
+              "addressPrefix": "10.1.2.0/24"
+            },
             "virtualNetworkGateways": [
               {
                 "name": "vpngateway",
@@ -30,35 +34,51 @@
               }
             ]
           },
-          
           {
             "name": "AzureFirewallSubnet",
-            "addressPrefix": "10.1.3.0/24"
+            "properties": {
+              "addressPrefix": "10.1.3.0/24"
+            }
           },
           {
             "name": "m2-ne-prod-hub1-firewall",
-            "addressPrefix": "10.1.4.0/24"
+            "properties": {
+              "addressPrefix": "10.1.4.0/24"
+            }
           },
           {
             "name": "m2-ne-prod-hub1-aad-ds",
-            "addressPrefix": "10.1.5.0/24"
+            "properties": {
+              "addressPrefix": "10.1.5.0/24"
+            }
           },
           {
             "name": "m2-ne-prod-hub1-ad-ds",
-            "addressPrefix": "10.1.6.0/24",
-            "routetablename": "m2-ne-prod-hub1-ad-ds-routetable"
+            "properties": {
+              "addressPrefix": "10.1.6.0/24",
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-ne-prod-hub1-ad-ds-routetable')]"
+              }
+            }
           },
           {
             "name": "m2-ne-prod-hub1-file-share",
-            "addressPrefix": "10.1.7.0/24"
-           
+            "properties": {
+              "addressPrefix": "10.1.7.0/24"
+            }
           },
           {
             "name": "m2-ne-prod-hub1-jumpbox",
-            "addressPrefix": "10.1.8.0/24",
-            "routetablename": "m2-ne-prod-hub1-jumpbox-routetable",
-            "nsgname": "m2-ne-prod-hub1-jumpbox-nsg"
-          }      
+            "properties": {
+              "addressPrefix": "10.1.8.0/24",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-jumpbox-nsg')]"
+              },
+              "routeTable": {
+                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-ne-prod-hub1-jumpbox-routetable')]"
+              }
+            }
+          }
         ],
         "routeTables": [
           {
@@ -81,7 +101,6 @@
               }
             ]
           }
-         
         ],
         "networkSecurityGroups": [
           {
@@ -106,25 +125,33 @@
             ]
           }
         ],
-        "connections": [
-          
-        ],
+        "connections": [],
         "virtualNetworkPeerings": [
-            {              
-              "properties": {
-                "remoteVirtualNetwork": {
-                  "id": "/subscriptions/926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
-                },
-                "allowVirtualNetworkAccess": "true",
-                "allowForwardedTraffic": "true",
-                "allowGatewayTransit": "false",
-                "useRemoteGateways": "false"
-              }
+          {
+            "properties": {
+              "remoteVirtualNetwork": {
+                "id": "/subscriptions/926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
+              },
+              "allowVirtualNetworkAccess": "true",
+              "allowForwardedTraffic": "true",
+              "allowGatewayTransit": "false",
+              "useRemoteGateways": "false"
             }
-        ],      
-        
+          },
+          {
+            "properties": {
+              "remoteVirtualNetwork": {
+                "id": "/subscriptions/c14f781e-159f-45b9-9538-56d9dd32d5e0/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1"
+              },
+              "allowVirtualNetworkAccess": "true",
+              "allowForwardedTraffic": "true",
+              "allowGatewayTransit": "false",
+              "useRemoteGateways": "false"
+            }
+          }
+        ],
         "azureFirewalls": [
-         {
+          {
             "name": "cnfw-ne-prod-hub1-fw",
             "azureFirewallspublicIPAddressName": "cnfw-ne-prod-hub1",
             "properties": {
@@ -137,7 +164,6 @@
                     },
                     "InternalPublicIPAddress": {
                       "id": "[resourceId('Microsoft.Network/publicIPAddresses','cnfw-ne-prod-hub1')]"
-                      
                     }
                   }
                 }
@@ -200,7 +226,7 @@
                 }
               ]
             }
-         }
+          }
         ]
       }
     }
