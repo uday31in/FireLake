@@ -1,0 +1,226 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vNetDefinition": {
+      "type": "object",
+      "metadata": {
+        "description": "Azure region where the hub will be deployed"
+      }
+    },
+    "publicIPAddressType": {
+      "type": "string",
+      "defaultValue": "Static",
+      "allowedValues": [
+        "Dynamic",
+        "Static"
+      ],
+      "metadata": {
+        "description": "Type of public IP address"
+      }
+    }
+  },
+  "variables": {
+    "peeringslookup": {
+      "true": "[parameters('vNetDefinition').virtualNetworkPeerings]",
+      "false": [{
+          "name": "peeringslookup",
+          "properties": {
+            "remoteVirtualNetwork" :{
+              "id":"none"
+            }
+          }
+      }]
+    },
+    "peerings": "[variables('peeringslookup')[string(greater(length(parameters('vNetDefinition').virtualNetworkPeerings), 0))]]",
+    "firewallLookup" : {
+      "true": "[parameters('vNetDefinition').azureFirewalls]",
+      "false": [{
+          "name": "firewalllookup",
+          "properties": {}
+      }]
+    },
+    "firewalls": "[variables('firewallLookup')[string(greater(length(parameters('vNetDefinition').azureFirewalls), 0))]]"
+
+  },
+  "resources": [
+    {
+      "copy": {
+        "name": "routetablecopy",
+        "count": "[length(parameters('vNetDefinition').routeTables)]"
+      },
+      "condition": "[greater(length(parameters('vNetDefinition').routeTables),0)]",
+      "name": "[parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].name]",
+      "type": "Microsoft.Network/routeTables",
+      "apiVersion": "2017-10-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "copy": [
+          {
+            "name": "routes",
+            "count": "[length(parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes)]",
+            "input": {
+              "name": "[parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].name]",
+              "properties": {
+                "addressPrefix": "[parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].addressPrefix]",
+                "nextHopType": "[parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopType]",
+                "nextHopIpAddress": "[if(equals(parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopType,'Internet'),json('null'),parameters('vNetDefinition').routeTables[copyIndex('routetablecopy')].routes[copyIndex('routes')].nextHopIpAddress)]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "copy": {
+        "name": "networkSecurityGroupCopy",
+        "count": "[length(parameters('vNetDefinition').networkSecurityGroups)]"
+      },
+      "condition": "[greater(length(parameters('vNetDefinition').networkSecurityGroups),0)]",
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('vNetDefinition').networkSecurityGroups[copyIndex('networkSecurityGroupCopy')].name]",
+      "dependsOn": [],
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "copy": [
+          {
+            "name": "securityRules",
+            "count": "[length(parameters('vNetDefinition').networkSecurityGroups[copyIndex('networkSecurityGroupCopy')].securityRules)]",
+            "input": {
+              "name": "[parameters('vNetDefinition').networkSecurityGroups[copyIndex('networkSecurityGroupCopy')].securityRules[copyIndex('securityRules')].name]",
+              "properties": "[parameters('vNetDefinition').networkSecurityGroups[copyIndex('networkSecurityGroupCopy')].securityRules[copyIndex('securityRules')].properties]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2017-10-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('vNetDefinition').vnetName]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "routetablecopy",
+        "networkSecurityGroupCopy"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vNetDefinition').vnetAddressPrefix]"
+          ]
+        },
+        "dhcpOptions": {
+          "dnsServers": "[parameters('vNetDefinition').dnsServers]"
+        },
+        "copy": [
+          {
+            "name": "subnets",
+            "count": "[length(parameters('vNetDefinition').subnetlist)]",
+            "input": {
+              "name": "[parameters('vNetDefinition').subnetlist[copyIndex('subnets')].name]",
+              "properties": "[parameters('vNetDefinition').subnetlist[copyIndex('subnets')].properties]"
+            }
+          }
+        ]
+      }
+    },  
+    {
+      "type": "Microsoft.Resources/deployments", 
+      "apiVersion": "2018-05-01",
+      "condition": "[greater(length(parameters('vNetDefinition').virtualNetworkPeerings),0)]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetDefinition').vnetName)]"
+      ],     
+      "name": "[concat('vnp-', last(split(variables('peerings')[copyIndex()].properties.remoteVirtualNetwork.id,'/')))]",
+      "copy": {
+        "name": "iterator",
+        "count": "[length(variables('peerings'))]",
+        "mode": "Parallel"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "apiVersion": "2016-06-01",
+              "location": "[resourceGroup().location]",
+              "type": "Microsoft.Network/virtualNetworks/virtualNetworkPeerings",
+              "name": "[concat(parameters('vNetDefinition').vnetName, '/', last(split(variables('peerings')[copyIndex()].properties.remoteVirtualNetwork.id,'/')))]",
+              "properties": "[variables('peerings')[copyIndex()].properties]"
+            }
+          ]
+        }
+      }
+    },    
+    {
+      "type": "Microsoft.Resources/deployments", 
+      "apiVersion": "2018-05-01",
+      "name": "[concat('AzureFirewall', '')]",
+      "condition": "[greater(length(parameters('vNetDefinition').azureFirewalls),0)]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetDefinition').vnetName)]"
+      ],
+      "copy": {
+        "name": "iterator",
+        "count": "[length(variables('firewalls'))]",
+        "mode": "Parallel"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+          "contentVersion": "1.0.0.0",
+          "parameters": {           
+            "vNetDefinition": {
+              "type": "object",
+              "metadata": {
+                "description": "Azure region where the hub will be deployed"
+              }
+            }
+          },
+          "variables": {},
+          "resources": [
+            {
+              "apiVersion": "2017-08-01",
+              "type": "Microsoft.Network/publicIPAddresses",
+              "name": "[variables('firewalls')[copyIndex()].azureFirewallspublicIPAddressName]",
+              "location":"[resourceGroup().location]",
+              "sku": {
+                "name": "Standard"
+              },
+              "properties": {
+                "publicIPAllocationMethod": "[parameters('publicIPAddressType')]",
+                "dnsSettings": {
+                  "domainNameLabel": "[variables('firewalls')[copyIndex()].azureFirewallspublicIPAddressName]"
+                }
+              }
+            },
+            {
+              "apiVersion": "2018-06-01",
+              "type": "Microsoft.Network/azureFirewalls",
+              "name":"[variables('firewalls')[copyIndex()].name]",
+              "location":"[resourceGroup().location]",
+              "dependsOn": [
+                "[variables('firewalls')[copyIndex()].azureFirewallspublicIPAddressName]"
+              ],
+              "properties": "[variables('firewalls')[copyIndex()].properties]"
+            }
+
+          ]
+        },
+        "parameters":{
+          "vNetDefinition": {
+            "value": "[parameters('vNetDefinition')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
