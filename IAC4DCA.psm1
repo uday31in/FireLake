@@ -844,7 +844,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
 }
 
 
-function Ensure-AzureRMRoleDefinition ($AzureIsAuthoritative = $true, $path = "C:\git\FireLake\root\M2", $managementsubscriptionID=$mgmtSubscriptionID)
+function Ensure-AzureRMRoleDefinition ($AzureIsAuthoritative = $true, $path = "C:\git\FireLake\root\M2", $managementsubscriptionID)
 {
     #This must run under the context of managemnt subscription otherwise roledefinition will be spewed
 
