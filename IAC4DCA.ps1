@@ -8,7 +8,7 @@
 [switch] $TemplateDeployment,
 
 $AzureIsAuthoritative = $true,
-$TenantRootId = 'b2a0bb8e-3f26-47f8-9040-209289b412a8' ,
+$TenantRootId = 'b590c310-f80d-4c5b-981f-7dc9c87ea414',
 $TenantRootname = 'root',
 $TenantManagementGroupRoot = "M2",
 $vstsAAObjectID = (Get-AzureRmADServicePrincipal -SearchString 'iaac4dcm-cd4dcm-M2').Id,
