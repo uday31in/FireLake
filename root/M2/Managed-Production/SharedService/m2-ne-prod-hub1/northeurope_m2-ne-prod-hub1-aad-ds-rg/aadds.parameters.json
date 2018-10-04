@@ -10,11 +10,8 @@
                         "tenantId": "virtualdatacenter.onmicrosoft.com",                    
                         "domainName": "m2-aadds.local",
                         "vnetSiteID": "/subscriptions/15e50875-e180-4d16-a8cb-57361c6a3cfb/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1",
-                        "subnetId": "/subscriptions/15e50875-e180-4d16-a8cb-57361c6a3cfb/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1/subnets/m2-ne-prod-hub1-aad-ds",
-                        "domainControllerIpAddress": [
-                            "10.1.5.4",
-                            "10.0.0.8"
-                          ]
+                        "subnetId": "/subscriptions/15e50875-e180-4d16-a8cb-57361c6a3cfb/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1/subnets/m2-ne-prod-hub1-aad-ds"
+                        
                     }
                
             }

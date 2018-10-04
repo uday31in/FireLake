@@ -1,0 +1,1 @@
+AAD DS require Directory Admin Privileges hence excluded from CICD pipeline.

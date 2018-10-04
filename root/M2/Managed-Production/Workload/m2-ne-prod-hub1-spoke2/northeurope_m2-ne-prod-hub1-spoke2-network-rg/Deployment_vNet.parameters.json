@@ -4,8 +4,8 @@
     "parameters": {
         "vNetDefinition": {
             "value": {
-                "vnetName": "m2-ne-prod-hub1-spoke1",
-                "vnetAddressPrefix": "10.1.16.0/20",
+                "vnetName": "m2-ne-prod-hub1-spoke2",
+                "vnetAddressPrefix": "10.1.32.0/20",
                 "dnsServers": [
                     "10.1.2.4",
                     "10.1.15.4",
@@ -13,42 +13,42 @@
                 ],
                 "subnetlist": [
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-app1",
+                        "name": "m2-ne-prod-hub1-spoke2-app1",
                         "properties": {
-                            "addressPrefix": "10.1.16.0/24",
+                            "addressPrefix": "10.1.32.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke1-app1-nsg')]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke2-app1-nsg')]"
                             },
                             "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-ne-prod-hub1-spoke1-default-routetable')]"
+                                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-ne-prod-hub1-spoke2-default-routetable')]"
                             }
                         }
                     },
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-app2",
+                        "name": "m2-ne-prod-hub1-spoke2-app2",
                         "properties": {
-                            "addressPrefix": "10.1.17.0/24",
+                            "addressPrefix": "10.1.33.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke1-app2-nsg')]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke2-app2-nsg')]"
                             },
                             "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-ne-prod-hub1-spoke1-default-routetable')]"
+                                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-ne-prod-hub1-spoke2-default-routetable')]"
                             }
                         }
                     },
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-app3",
+                        "name": "m2-ne-prod-hub1-spoke2-app3",
                         "properties": {
-                            "addressPrefix": "10.1.18.0/24",
+                            "addressPrefix": "10.1.34.0/24",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke1-app3-nsg')]"
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke2-app3-nsg')]"
                             }
                         }
                     }
                 ],
                 "routeTables": [
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-default-routetable",
+                        "name": "m2-ne-prod-hub1-spoke2-default-routetable",
                         "routes": [
                             {
                                 "name": "internet",
@@ -61,7 +61,7 @@
                 ],
                 "networkSecurityGroups": [
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-app1-nsg",
+                        "name": "m2-ne-prod-hub1-spoke2-app1-nsg",
                         "securityRules": [
                             {
                                 "name": "rdp_rule1",
@@ -82,7 +82,7 @@
                         ]
                     },
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-app2-nsg",
+                        "name": "m2-ne-prod-hub1-spoke2-app2-nsg",
                         "securityRules": [
                             {
                                 "name": "rdp_rule1",
@@ -103,7 +103,7 @@
                         ]
                     },
                     {
-                        "name": "m2-ne-prod-hub1-spoke1-app3-nsg",
+                        "name": "m2-ne-prod-hub1-spoke2-app3-nsg",
                         "securityRules": [
                             {
                                 "name": "rdp_rule1",

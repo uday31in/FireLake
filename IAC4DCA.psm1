@@ -988,13 +988,9 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
             {
                 Write-Host "Effective Scope: $effectiveScope"
                 $subscription = Select-AzureRmSubscription -SubscriptionObject (Get-AzureRmSubscription -SubscriptionName (get-item $currentDirectory).Parent)
-                $currentRGinAzure = Get-AzureRmResourceGroup
+                $currentRGinAzure = Get-AzureRmResourceGroup |? {$_.ResourceGroupName -eq ((get-item $currentDirectory).BaseName.split('_') | select -Last 1)}
                 
                 $rgfilename = Join-path $currentDirectory ("resourcegroup.json")
-
-                
-
-                
 
                 foreach ($rginAzure in $currentRGinAzure)
                 {
@@ -1002,7 +998,7 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
                     
                     if(Test-Path (join-path ((get-item $currentDirectory).Parent.FullName)  "$($rginAzure.location)_$($rginAzure.Resourcegroupname)"))
                     {
-                        $currentRGinAzure | ConvertTo-Json -Depth 20 | out-file $rgfilename
+                        $rginAzure | ConvertTo-Json -Depth 20 | out-file $rgfilename
                     }
                     else
                     {
@@ -1041,6 +1037,13 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
                
                     if($deploymentparameterfilename -ne "")
                     {
+                        $testresult = Test-AzureRmResourceGroupDeployment `
+                                                           -Mode Incremental `
+                                                           -ResourceGroupName $rgname `
+                                                           -TemplateFile $_.FullName `
+                                                           -TemplateParameterFile $deploymentparameterfilename 
+                                                           
+
                         New-AzureRmResourceGroupDeployment -Name $deploymentname `
                                                            -Mode Incremental `
                                                            -ResourceGroupName $rgname `
