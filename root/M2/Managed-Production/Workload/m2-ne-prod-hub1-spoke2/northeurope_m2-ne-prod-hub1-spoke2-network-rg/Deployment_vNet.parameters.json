@@ -6,10 +6,10 @@
             "value": {
                 "vnetName": "m2-ne-prod-hub1-spoke2",
                 "vnetAddressPrefix": "10.1.32.0/20",
-                "dnsServers": [
-                    "10.1.2.4",
+                "dnsServers": [                    
                     "10.1.15.4",
-                    "10.1.15.5"
+                    "10.1.15.5",
+                    "10.1.2.4"
                 ],
                 "subnetlist": [
                     {
