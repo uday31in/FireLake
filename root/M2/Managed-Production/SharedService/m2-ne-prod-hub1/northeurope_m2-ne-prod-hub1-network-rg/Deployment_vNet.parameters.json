@@ -6,10 +6,10 @@
             "value": {
                 "vnetName": "m2-ne-prod-hub1",
                 "vnetAddressPrefix": "10.1.0.0/20",
-                "dnsServers": [
-                    "10.1.2.4",
+                "dnsServers": [                    
                     "10.1.15.4",
-                    "10.1.15.5"
+                    "10.1.15.5",
+                    "10.1.2.4"
                 ],
                 "subnetlist": [
                     {
@@ -206,18 +206,33 @@
                                         },
                                         "rules": [
                                             {
-                                                "name": "netRule1",
+                                                "name": "Hub1Spoke1-to-Hub1Spoke2",
                                                 "protocols": [
-                                                    "TCP"
+                                                    "Any"
                                                 ],
                                                 "sourceAddresses": [
-                                                    "192.168.2.0/24"
+                                                    "10.1.16.0/20"
                                                 ],
                                                 "destinationAddresses": [
-                                                    "*"
+                                                    "10.1.32.0/20"
                                                 ],
                                                 "destinationPorts": [
-                                                    "8000-8999"
+                                                    "*"
+                                                ]
+                                            },
+                                            {
+                                                "name": "Hub1Spoke2-to-Hub1Spoke1",
+                                                "protocols": [
+                                                    "Any"
+                                                ],
+                                                "sourceAddresses": [
+                                                    "10.1.32.0/20"
+                                                ],
+                                                "destinationAddresses": [
+                                                    "10.1.16.0/20"
+                                                ],
+                                                "destinationPorts": [
+                                                    "*"
                                                 ]
                                             }
                                         ]
