@@ -156,7 +156,11 @@
                                     }
                                 }
                             ],
-                            "gatewayType": "ExpressRoute"
+                            "gatewayType": "ExpressRoute",
+                            "sku": {
+                                "name": "Standard",
+                                "tier": "Standard"
+                            }
                         }
                     }
                 ],
