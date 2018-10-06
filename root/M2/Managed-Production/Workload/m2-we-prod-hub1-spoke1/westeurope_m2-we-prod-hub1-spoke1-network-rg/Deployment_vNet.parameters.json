@@ -1,0 +1,145 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vNetDefinition": {
+            "value": {
+                "vnetName": "m2-we-prod-hub1-spoke1",
+                "vnetAddressPrefix": "10.2.16.0/20",
+                "dnsServers": [
+                    "10.1.15.4",
+                    "10.1.15.5",
+                    "10.2.2.4"
+                ],
+                "subnetlist": [
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-app1",
+                        "properties": {
+                            "addressPrefix": "10.2.16.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-we-prod-hub1-spoke1-app1-nsg')]"
+                            },
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-we-prod-hub1-spoke1-default-routetable')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-app2",
+                        "properties": {
+                            "addressPrefix": "10.2.17.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-we-prod-hub1-spoke1-app2-nsg')]"
+                            },
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables' ,'m2-we-prod-hub1-spoke1-default-routetable')]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-app3",
+                        "properties": {
+                            "addressPrefix": "10.2.18.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-we-prod-hub1-spoke1-app3-nsg')]"
+                            }
+                        }
+                    }
+                ],
+                "routeTables": [
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-default-routetable",
+                        "routes": [
+                            {
+                                "name": "internet",
+                                "addressPrefix": "0.0.0.0/0",
+                                "nextHopType": "VirtualAppliance",
+                                "nextHopIpAddress": "10.2.1.4"
+                            }
+                        ]
+                    }
+                ],
+                "networkSecurityGroups": [
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-app1-nsg",
+                        "securityRules": [
+                            {
+                                "name": "rdp_rule1",
+                                "properties": {
+                                    "description": "Allow RDP",
+                                    "protocol": "Tcp",
+                                    "sourcePortRange": "*",
+                                    "destinationPortRange": "3389",
+                                    "sourceAddressPrefix": "Internet",
+                                    "destinationAddressPrefix": "*",
+                                    "access": "Allow",
+                                    "priority": 100,
+                                    "direction": "Inbound",
+                                    "sourceApplicationSecurityGroups": "",
+                                    "destinationApplicationSecurityGroups": ""
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-app2-nsg",
+                        "securityRules": [
+                            {
+                                "name": "rdp_rule1",
+                                "properties": {
+                                    "description": "Allow RDP",
+                                    "protocol": "Tcp",
+                                    "sourcePortRange": "*",
+                                    "destinationPortRange": "3389",
+                                    "sourceAddressPrefix": "Internet",
+                                    "destinationAddressPrefix": "*",
+                                    "access": "Allow",
+                                    "priority": 100,
+                                    "direction": "Inbound",
+                                    "sourceApplicationSecurityGroups": "",
+                                    "destinationApplicationSecurityGroups": ""
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "m2-we-prod-hub1-spoke1-app3-nsg",
+                        "securityRules": [
+                            {
+                                "name": "rdp_rule1",
+                                "properties": {
+                                    "description": "Allow RDP",
+                                    "protocol": "Tcp",
+                                    "sourcePortRange": "*",
+                                    "destinationPortRange": "3389",
+                                    "sourceAddressPrefix": "Internet",
+                                    "destinationAddressPrefix": "*",
+                                    "access": "Allow",
+                                    "priority": 100,
+                                    "direction": "Inbound",
+                                    "sourceApplicationSecurityGroups": "",
+                                    "destinationApplicationSecurityGroups": ""
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "connections": [],
+                "virtualNetworkPeerings": [
+                    {
+                        "properties": {
+                            "remoteVirtualNetwork": {
+                                "id": "/subscriptions/926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
+                            },
+                            "allowVirtualNetworkAccess": "true",
+                            "allowForwardedTraffic": "true",
+                            "allowGatewayTransit": "false",
+                            "useRemoteGateways": "false"
+                        }
+                    }
+                ],
+                "azureFirewalls": []
+            }
+        }
+    }
+}

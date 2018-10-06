@@ -16,7 +16,7 @@
                         "name": "GatewaySubnet",
                         "properties": {
                             "addressPrefix": "10.2.0.0/24"
-                        }                        
+                        }
                     },
                     {
                         "name": "AzureFirewallSubnet",
@@ -96,12 +96,23 @@
                             }
                         ]
                     }
-                ],                
+                ],
                 "virtualNetworkPeerings": [
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
                                 "id": "/subscriptions/15e50875-e180-4d16-a8cb-57361c6a3cfb/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1"
+                            },
+                            "allowVirtualNetworkAccess": "true",
+                            "allowForwardedTraffic": "true",
+                            "allowGatewayTransit": "false",
+                            "useRemoteGateways": "false"
+                        }
+                    },
+                    {
+                        "properties": {
+                            "remoteVirtualNetwork": {
+                                "id": "/subscriptions/e1d0d528-f223-4023-9c75-dfb31a2c7ade/resourceGroups/m2-we-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1-spoke1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
@@ -128,7 +139,11 @@
                                     }
                                 }
                             ],
-                            "gatewayType": "ExpressRoute"
+                            "gatewayType": "ExpressRoute",
+                            "sku": {
+                                "name": "Standard",
+                                "tier": "Standard"
+                            }
                         }
                     }
                 ],
