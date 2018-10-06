@@ -16,17 +16,7 @@
                         "name": "GatewaySubnet",
                         "properties": {
                             "addressPrefix": "10.2.0.0/24"
-                        },
-                        "virtualNetworkGateways": [
-                            {
-                                "name": "vpngateway",
-                                "privateIPAllocationMethod": "Dynamic",
-                                "publicIPAddress": "Dynamic",
-                                "gatewayType": "Vpn",
-                                "vpnType": "RouteBased",
-                                "enableBgp": "true"
-                            }
-                        ]
+                        }                        
                     },
                     {
                         "name": "AzureFirewallSubnet",
@@ -106,8 +96,7 @@
                             }
                         ]
                     }
-                ],
-                "connections": [],
+                ],                
                 "virtualNetworkPeerings": [
                     {
                         "properties": {
@@ -121,6 +110,29 @@
                         }
                     }
                 ],
+                "virtualNetworkGateways": [
+                    {
+                        "name": "ergw-we-prod-hub1-gw",
+                        "gatewayPublicIPAddressName": "ergw-we-prod-hub1",
+                        "properties": {
+                            "ipConfigurations": [
+                                {
+                                    "name": "ergwIpConf",
+                                    "properties": {
+                                        "subnet": {
+                                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetDefinition').vnetName, 'gatewaySubnet')]"
+                                        },
+                                        "publicIPAddress": {
+                                            "id": "[resourceId('Microsoft.Network/publicIPAddresses','ergw-we-prod-hub1')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "gatewayType": "ExpressRoute"
+                        }
+                    }
+                ],
+                "connections": [],
                 "azureFirewalls": [
                     {
                         "name": "azfw-we-prod-hub1-fw",

@@ -6,7 +6,7 @@
             "value": {
                 "vnetName": "m2-ne-prod-hub1",
                 "vnetAddressPrefix": "10.1.0.0/20",
-                "dnsServers": [                    
+                "dnsServers": [
                     "10.1.15.4",
                     "10.1.15.5",
                     "10.1.2.4"
@@ -16,17 +16,7 @@
                         "name": "GatewaySubnet",
                         "properties": {
                             "addressPrefix": "10.1.0.0/24"
-                        },
-                        "virtualNetworkGateways": [
-                            {
-                                "name": "vpngateway",
-                                "privateIPAllocationMethod": "Dynamic",
-                                "publicIPAddress": "Dynamic",
-                                "gatewayType": "Vpn",
-                                "vpnType": "RouteBased",
-                                "enableBgp": "true"
-                            }
-                        ]
+                        }
                     },
                     {
                         "name": "AzureFirewallSubnet",
@@ -113,7 +103,6 @@
                         ]
                     }
                 ],
-                "connections": [],
                 "virtualNetworkPeerings": [
                     {
                         "properties": {
@@ -149,6 +138,29 @@
                         }
                     }
                 ],
+                "virtualNetworkGateways": [
+                    {
+                        "name": "ergw-ne-prod-hub1-gw",
+                        "gatewayPublicIPAddressName": "ergw-ne-prod-hub1",
+                        "properties": {
+                            "ipConfigurations": [
+                                {
+                                    "name": "ergwIpConf",
+                                    "properties": {
+                                        "subnet": {
+                                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetDefinition').vnetName, 'gatewaySubnet')]"
+                                        },
+                                        "publicIPAddress": {
+                                            "id": "[resourceId('Microsoft.Network/publicIPAddresses','ergw-ne-prod-hub1')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "gatewayType": "ExpressRoute"
+                        }
+                    }
+                ],
+                "connections": [],
                 "azureFirewalls": [
                     {
                         "name": "azfw-ne-prod-hub1-fw",
