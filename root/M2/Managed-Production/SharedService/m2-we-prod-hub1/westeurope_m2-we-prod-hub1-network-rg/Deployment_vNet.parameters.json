@@ -116,7 +116,7 @@
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
-                            "allowGatewayTransit": "false",
+                            "allowGatewayTransit": "true",
                             "useRemoteGateways": "false"
                         }
                     }
@@ -147,7 +147,22 @@
                         }
                     }
                 ],
-                "connections": [],
+                "connections": [
+                    {
+                        "name": "ercn-we-prod-hub1-seattle",
+                        "properties": {
+                            "authorizationKey": "",
+                            "virtualNetworkGateway1": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworkGateways','ergw-we-prod-hub1-gw')]"
+                            },
+                            "peer": {
+                                "id": ""
+                            },
+                            "connectionType": "ExpressRoute",
+                            "routingWeight": "10"
+                        }
+                    }
+                ],
                 "azureFirewalls": [
                     {
                         "name": "azfw-we-prod-hub1-fw",
