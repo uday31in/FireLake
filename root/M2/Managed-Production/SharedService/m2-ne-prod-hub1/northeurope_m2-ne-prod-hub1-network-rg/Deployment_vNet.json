@@ -65,7 +65,17 @@
                 }
             ]
         },
-        "gateways": "[variables('gatewayLookup')[string(greater(length(parameters('vNetDefinition').virtualNetworkGateways), 0))]]"
+        "gateways": "[variables('gatewayLookup')[string(greater(length(parameters('vNetDefinition').virtualNetworkGateways), 0))]]",
+        "connectionsLookup": {
+            "true": "[parameters('vNetDefinition').connections]",
+            "false": [
+                {
+                    "name": "connectionslookup",
+                    "properties": {}
+                }
+            ]
+        },
+        "connections": "[variables('connectionslookup')[string(greater(length(parameters('vNetDefinition').connections), 0))]]"
     },
     "resources": [
         {
@@ -190,7 +200,7 @@
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('vNetDefinition').vnetName)]"
             ],
             "copy": {
-                "name": "iterator",
+                "name": "gatewayCopy",
                 "count": "[length(parameters('vNetDefinition').virtualNetworkGateways)]",
                 "mode": "Parallel"
             },
@@ -237,6 +247,38 @@
                     "vNetDefinition": {
                         "value": "[parameters('vNetDefinition')]"
                     }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "condition": "[greater(length(parameters('vNetDefinition').connections),0)]",
+            "dependsOn": [
+                "gatewayCopy"
+            ],
+            "name": "[concat('erConnection',copyIndex())]",
+            "copy": {
+                "name": "connectionsCopy",
+                "count": "[length(variables('connections'))]",
+                "mode": "Parallel"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/connections",
+                            "apiVersion": "2018-08-01",
+                            "location": "[resourceGroup().location]",
+                            "name": "[parameters('vNetDefinition').connections[copyIndex('connectionsCopy')].name]",
+                            "properties": "[variables('connections')[copyIndex()].properties]"
+                        }
+                    ]
                 }
             }
         },
