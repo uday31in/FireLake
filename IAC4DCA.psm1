@@ -519,13 +519,13 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
             $currentDirectory = $_.FullName
             Write-Host "Effective Scope: $effectiveScope"
             
-            if(IsManagementGroup (get-item $_.FullName))
+            if(IsManagementGroup ($_.FullName))
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'}  
+                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
             }
             else
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'} 
+                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'  -and  ($_.SubscriptionId -eq ($effectiveScope -split '/' | select -last 1)) }
             }
 
             foreach ($policydefinition in $currentPolicyDefinitionsInAzure) 
@@ -558,6 +558,47 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
             $currentDirectory = $_.FullName
             Write-Host "Effective Scope: $effectiveScope"
 
+            
+
+            #Push local assignments
+            Get-ChildItem -file -Path $currentDirectory PolicyDefinition*.json |%{
+                
+                Write-Host "Filename : $($_.basename)"
+
+                $localassignment = get-content $_.FullName | ConvertFrom-Json
+                
+                [string]$policyname = ($_.basename).replace("PolicyDefinition_", "")
+
+                 if (( Get-Member -InputObject $localassignment -Name Name) -eq $null)
+                 {
+                     $localassignment  | Add-member  -MemberType NoteProperty -Name Name -Value ''
+                 }
+                 $localassignment.Name = $policyname
+                [string]$policyJsonRule = "$($localassignment.Properties.policyRule | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
+                [string]$policyJsonParameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
+
+                               
+                if(IsManagementGroup ($_.DirectoryName))
+                {
+                    Write-Host "New-AzureRmPolicyDefinition  -ManagementGroupName ($_.Directory.Name) -Name $policyname"
+                    $result = New-AzureRmPolicyDefinition -Mode All -ManagementGroupName ($_.Directory.Name) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
+                }
+                else 
+                {
+                    Write-Host "New-AzureRmPolicyDefinition $($_.fullname)"
+                    $result = New-AzureRmPolicyDefinition -Mode All  -SubscriptionId ($effectiveScope -split '/' | select -last 1) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
+                }
+
+                if($result -ne $null)
+                {
+                    $result | ConvertTo-Json -Depth 100 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } |out-file -FilePath $_.FullName
+                }
+                
+
+            }
+            
+
+            #removign the one from Azure that do not exist locally
             if(IsManagementGroup ($_.FullName))
             {
                 $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
@@ -583,43 +624,8 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
                     Remove-AzureRmPolicyDefinition -Id $policydefinition.ResourceId -force
                                         
                 }  
-                   
                 
             }
-
-            #Push local assignments
-            Get-ChildItem -file -Path $currentDirectory PolicyDefinition*.json |%{
-                
-                Write-Host "Filename : $($_.basename)"
-
-                $localassignment = get-content $_.FullName | ConvertFrom-Json
-                
-                [string]$policyname = ($_.basename).replace("PolicyDefinition_", "")
-                $localassignment.Name = $policyname
-                [string]$policyJsonRule = "$($localassignment.Properties.policyRule | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
-                [string]$policyJsonParameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
-
-                               
-                if(IsManagementGroup ($_.DirectoryName))
-                {
-                    Write-Host "New-AzureRmPolicyDefinition  -ManagementGroupName ($_.Directory.Name) -Name $policyname"
-                    $result = New-AzureRmPolicyDefinition -Mode All -ManagementGroupName ($_.Directory.Name) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
-                }
-                else 
-                {
-                    Write-Host "New-AzureRmPolicyDefinition $($_.fullname)"
-                    $result = New-AzureRmPolicyDefinition -Mode All  -SubscriptionId ($effectiveScope -split '/' | select -last 1) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
-                }
-
-                if($result -ne $null)
-                {
-                    $result | ConvertTo-Json -Depth 100 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } |out-file -FilePath $_.FullName
-                }
-                
-
-            }
-            
-           
         }
 
     }

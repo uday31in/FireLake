@@ -10,28 +10,35 @@
                         "enabledForDeployment": "true",
                         "enabledForDiskEncryption": "true",
                         "enabledForTemplateDeployment": "true",
-                        "tenantId": "b2a0bb8e-3f26-47f8-9040-209289b412a8",
+                        "tenantId": "b590c310-f80d-4c5b-981f-7dc9c87ea414",
                         "accessPolicies": [
                             {
-                                "tenantId": "b2a0bb8e-3f26-47f8-9040-209289b412a8",
-                                "objectId": "a3e38513-b8de-4176-9d80-f232c0fda633",
+                                "tenantId": "b590c310-f80d-4c5b-981f-7dc9c87ea414",
+                                "objectId": "d1967a51-a613-44aa-aead-a284ef04ed66",
                                 "permissions": {
-                                    "keys": [
-                                        "list"
-                                    ],
                                     "secrets": [
                                         "list"
                                     ]
                                 }
                             },
                             {
-                                "tenantId": "b2a0bb8e-3f26-47f8-9040-209289b412a8",
-                                "objectId": "b38a3dad-9e2d-4ed7-81be-6851bc292fa9",
+                                "tenantId": "b590c310-f80d-4c5b-981f-7dc9c87ea414",
+                                "objectId": "ce1bb14a-8fd8-443b-88bf-01b6d07c088c",
                                 "permissions": {
                                    
                                     "secrets": [
                                         "list",
                                         "set"
+                                    ]
+                                }
+                            },
+                            {
+                                "tenantId": "b590c310-f80d-4c5b-981f-7dc9c87ea414",
+                                "objectId": "4535357e-a045-409d-95be-7a58f111f5ee",
+                                "permissions": {
+                                   
+                                    "secrets": [
+                                        "list"                                       
                                     ]
                                 }
                             }
