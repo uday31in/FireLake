@@ -1,0 +1,152 @@
+{
+    "properties": {
+        "displayName": "Enable Azure Backup on Windows VMs",
+        "description": "This policy ensure backup vault and backup enablement per resource group with VMs",
+        "parameters": {
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imagePublisher",
+                        "equals": "MicrosoftWindowsServer"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imageOffer",
+                        "equals": "WindowsServer"
+                    },
+                    {
+                        "field": "Microsoft.Compute/imageSKU",
+                        "in": [
+                            "2008-R2-SP1",
+                            "2008-R2-SP1-smalldisk",
+                            "2012-Datacenter",
+                            "2012-Datacenter-smalldisk",
+                            "2012-R2-Datacenter",
+                            "2012-R2-Datacenter-smalldisk",
+                            "2016-Datacenter",
+                            "2016-Datacenter-Server-Core",
+                            "2016-Datacenter-Server-Core-smalldisk",
+                            "2016-Datacenter-smalldisk",
+                            "2016-Datacenter-with-Containers",
+                            "2016-Datacenter-with-RDSH"
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "resourceGroupName": "[resourceGroup().name]",
+                    "type": "Microsoft.RecoveryServices/backupprotecteditems",
+                    "existenceCondition": {
+                      "field": "name",
+                      "like": "*"
+                    },
+                    "deployment": {
+                        "properties": {
+                            "mode": "incremental",
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "vmName": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Name of Azure Virtual Machines"
+                                        }
+                                    },
+                                    "vmRgName": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Resource group containing the virtual machines."
+                                        }
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "Location for VM and Backup vault"
+                                        }
+                                    }
+                                },
+                                "variables": {
+                                    "backupFabric": "Azure",
+                                    "backupPolicy": "DefaultPolicy",
+                                    "v2VmType": "Microsoft.Compute/virtualMachines",
+                                    "v2VmContainer": "iaasvmcontainer;iaasvmcontainerv2;",
+                                    "v2Vm": "vm;iaasvmcontainerv2;",
+                                    "vaultName": "[concat(resourceGroup().name, '-backupvault')]"
+                                },
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Resources/deployments",
+                                        "apiVersion": "2017-05-10",
+                                        "name": "backupSetByPolicy",
+                                        "properties": {
+                                            "mode": "Incremental",
+                                            "template": {
+                                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                                "contentVersion": "1.0.0.0",
+                                                "parameters": {},
+                                                "variables": {},
+                                                "resources": [
+                                                    {
+                                                        "name": "[variables('vaultName')]",
+                                                        "type": "Microsoft.RecoveryServices/vaults",
+                                                        "apiVersion": "2016-06-01",
+                                                        "location": "[parameters('location')]",
+                                                        "properties": {
+                                                        },
+                                                        "sku": {
+                                                          "name": "Standard"
+                                                        }
+                                                      },
+                                                    {
+                                                        "name": "[concat(variables('vaultName'), '/', variables('backupFabric'), '/', variables('v2VmContainer'), concat(parameters('vmRgName'),';',parameters('vmName')), '/', variables('v2Vm'), concat(parameters('vmRgName'),';',parameters('vmName')))]",
+                                                        "apiVersion": "2016-12-01",
+                                                        "location": "[parameters('location')]",
+                                                        "type": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems",
+                                                        "dependsOn": [
+                                                            "[resourceId('Microsoft.RecoveryServices/vaults/', variables('vaultName'))]"
+                                                        ],
+                                                        "properties": {
+                                                            "protectedItemType": "[variables('v2VmType')]",
+                                                            "policyId": "[resourceId('Microsoft.RecoveryServices/vaults/backupPolicies', variables('vaultName'),variables('backupPolicy'))]",
+                                                            "sourceResourceId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('vmRgName'), '/providers/Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+                                                        }
+                                                    }
+                                                ],
+                                                "outputs": {}
+                                            }
+                                        }
+                                    }
+                                ],
+                                "outputs": {
+                                    "status": {
+                                        "type": "string",
+                                        "value": "[concat('Backup enabled successfully for VM:', ' ', parameters('vmName'))]"
+                                    }
+                                }
+                            },
+                            "parameters": {
+                                "vmName": {
+                                    "value": "[field('name')]"
+                                },
+                                "location": {
+                                    "value": "[field('location')]"
+                                },
+                                "vmRgName": {
+                                    "value": "[resourceGroup().name]"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
