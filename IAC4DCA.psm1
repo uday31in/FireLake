@@ -580,7 +580,7 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
                                
                 if(IsManagementGroup ($_.DirectoryName))
                 {
-                    Write-Host "New-AzureRmPolicyDefinition  -ManagementGroupName ($_.Directory.Name) -Name $policyname"
+                    Write-Host "New-AzureRmPolicyDefinition  -ManagementGroupName $($_.Directory.Name) -Name $policyname"
                     $result = New-AzureRmPolicyDefinition -Mode All -ManagementGroupName ($_.Directory.Name) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
                 }
                 else 
@@ -1043,13 +1043,14 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
                
                     if($deploymentparameterfilename -ne "")
                     {
+                        <#
                         $testresult = Test-AzureRmResourceGroupDeployment `
                                                            -Mode Incremental `
                                                            -ResourceGroupName $rgname `
                                                            -TemplateFile $_.FullName `
                                                            -TemplateParameterFile $deploymentparameterfilename 
                                                            
-
+                        #>
                         New-AzureRmResourceGroupDeployment -Name $deploymentname `
                                                            -Mode Incremental `
                                                            -ResourceGroupName $rgname `

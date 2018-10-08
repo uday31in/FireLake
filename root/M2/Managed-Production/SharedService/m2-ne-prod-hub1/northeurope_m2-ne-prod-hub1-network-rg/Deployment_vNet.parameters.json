@@ -222,6 +222,29 @@
                                                 "targetUrls": [
                                                     "*microsoft.com"
                                                 ]
+                                            },
+                                            {
+                                                "name": "aad-proxy",
+                                                "protocols": [
+                                                    {
+                                                        "port": "80",
+                                                        "protocolType": "http"
+                                                    },
+                                                    {
+                                                        "port": "443",
+                                                        "protocolType": "https"
+                                                    }
+                                                ],
+                                                "targetUrls": [
+                                                    "*.msappproxy.net",
+                                                    "*.servicebus.windows.net",
+                                                    "login.windows.net",
+                                                    "login.microsoftonline.com",
+                                                    "mscrl.microsoft.com",
+                                                    "crl.microsoft.com",
+                                                    "ocsp.msocsp.com",
+                                                    "www.microsoft.com"
+                                                ]
                                             }
                                         ]
                                     }

@@ -10,8 +10,8 @@
       },
       "allowedValues": [
         "Server2012R2",
-        "Server2016",
-        "Ubuntu"
+        "Server2016"
+       
       ]
     },
     "customData": {
@@ -23,7 +23,7 @@
     },
     "tierXNamePrefix": {
       "type": "string",
-      "defaultValue": "ab1",
+      "defaultValue": "DC",
       "metadata": {
         "description": "tier1 Name Prefix"
       }
@@ -37,32 +37,26 @@
     },
     "networkresourcegroupname": {
       "type": "string",
-      "defaultValue": "m2-ne-prod-hub1-spoke1-network-rg",
+      "defaultValue": "m2-ne-prod-hub1-network-rg",
       "metadata": {
         "description": "networkresourcegroupname"
       }
     },
     "virtualNetworkName": {
       "type": "string",
-      "defaultValue": "m2-ne-prod-hub1-spoke1",
+      "defaultValue": "m2-ne-prod-hub1",
       "metadata": {
         "description": "virtualNetworkName"
       }
     },
     "tierXsubnetName": {
       "type": "string",
-      "defaultValue": "m2-ne-prod-hub1-spoke1-app2",
+      "defaultValue": "m2-ne-prod-hub1-ad-ds",
       "metadata": {
         "description": "tierXsubnetName"
       }
     },
-    "tierXsubnetNameIlb": {
-      "type": "string",
-      "defaultValue": "m2-ne-prod-hub1-spoke1-app2",
-      "metadata": {
-        "description": "tierXsubnetNameIlb"
-      }
-    },
+    
     "windowsadminUsername": {
       "type": "string",
       "defaultValue": "uday"
@@ -89,9 +83,6 @@
   "vmSize": "Standard_DS1_v2",
   "tierXNamePrefix": "[concat(last(split(resourceGroup().name,'-')) ,'-' , parameters('tierXNamePrefix') )]",
   "tierXVMSubnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('tierXsubnetName'))]",
-  "tierXIlbSubnetRef": "[concat(variables('vnetID'), '/subnets/', parameters('tierXsubnetNameIlb'))]",
-  "tierXlbname": "[concat('Microsoft.Network/loadBalancers/', variables('tierXNamePrefix'),'-ilb')]",
-  "tierXlbID": "[resourceId('Microsoft.Network/loadBalancers', concat(variables('tierXNamePrefix'),'-ilb'))]",
   "tierXasgID": "[resourceId('Microsoft.Network/applicationSecurityGroups',concat(variables('tierXNamePrefix'),'-asg'))]",
   "tierXnsgID": "[resourceId('Microsoft.Network/networkSecurityGroups',concat(variables('tierXNamePrefix'),'-app-nsg'))]",
   "tierXasgAllowedToAccessID": "[resourceId(parameters('networkresourcegroupname'), 'Microsoft.Network/applicationSecurityGroups',concat(variables('tierXNamePrefix'),'-allowed-toaccess-asg'))]",
@@ -114,7 +105,6 @@
     }
   },
 
-  "createilb": "[parameters('createilb')]",
   "adminUsername": "[parameters('windowsadminUsername')]",
   "adminPassword": "[parameters('windowsadminpassword')]"
 },
@@ -269,20 +259,7 @@
             "direction": "Inbound"
           }
         },
-        {
-          "name": "allow_AzureLoadBalancer_rule",
-          "properties": {
-            "description": "allow_AzureLoadBalancer_rule",
-            "protocol": "*",
-            "sourcePortRange": "*",
-            "destinationPortRange": "*",
-            "sourceAddressPrefix": "AzureLoadBalancer",
-            "destinationAddressPrefix": "VirtualNetwork",
-            "access": "Allow",
-            "priority": 200,
-            "direction": "Inbound"
-          }
-        },
+       
         {
           "name": "deny_AllowVnetInBound_rule",
           "properties": {
@@ -310,7 +287,7 @@
       "count": "[variables('numberOfInstances')]"
     },
     "dependsOn": [
-      "[variables('tierXlbname')]",
+     
       "[variables('tierXasgID')]",
       "[variables('tierXnsgID')]"
     ],
@@ -322,12 +299,7 @@
             "privateIPAllocationMethod": "Dynamic",
             "subnet": {
               "id": "[variables('tierXVMSubnetRef')]"
-            },
-            "loadBalancerBackendAddressPools": [
-              {
-                "id": "[concat(variables('tierXlbID'), '/backendAddressPools/BackendPool1')]"
-              }
-            ],
+            },          
             "applicationSecurityGroups": [
               {
                 "id": "[variables('tierXasgID')]"
@@ -341,60 +313,7 @@
       }
     }
   },
-  {
-    "apiVersion": "2015-05-01-preview",
-    "type": "Microsoft.Network/loadBalancers",
-    "name": "[concat(variables('tierXNamePrefix'),'-ilb')]",
-    "location": "[resourceGroup().location]",
-    "properties": {
-      "frontendIPConfigurations": [
-        {
-          "properties": {
-            "subnet": {
-              "id": "[variables('tierXIlbSubnetRef')]"
-            }
-          },
-          "name": "LoadBalancerFrontend"
-        }
-      ],
-      "backendAddressPools": [
-        {
-          "name": "BackendPool1"
-        }
-      ],
-      "loadBalancingRules": [
-        {
-          "properties": {
-            "frontendIPConfiguration": {
-              "id": "[concat( variables('tierXlbID'),'/frontendIpConfigurations/LoadBalancerFrontend')]"
-            },
-            "backendAddressPool": {
-              "id": "[concat( variables('tierXlbID'), '/backendAddressPools/BackendPool1')]"
-            },
-            "probe": {
-              "id": "[concat(variables('tierXlbID'), '/probes/lbprobe')]"
-            },
-            "protocol": "Tcp",
-            "frontendPort": 80,
-            "backendPort": 80,
-            "idleTimeoutInMinutes": 4
-          },
-          "Name": "lbrule"
-        }
-      ],
-      "probes": [
-        {
-          "properties": {
-            "protocol": "Tcp",
-            "port": 80,
-            "intervalInSeconds": 5,
-            "numberOfProbes": 2
-          },
-          "name": "lbprobe"
-        }
-      ]
-    }
-  },
+  
   {
     "type": "Microsoft.Compute/virtualMachines",
     "name": "[concat(variables('tierXNamePrefix'), copyIndex(1))]",
