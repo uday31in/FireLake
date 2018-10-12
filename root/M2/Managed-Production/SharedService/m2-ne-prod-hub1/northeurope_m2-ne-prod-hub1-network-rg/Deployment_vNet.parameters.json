@@ -107,7 +107,7 @@
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
+                                "id": "/subscriptions/970b9212-d21d-474e-a251-8733e97d358c/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
@@ -118,7 +118,7 @@
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/c14f781e-159f-45b9-9538-56d9dd32d5e0/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1"
+                                "id": "/subscriptions/0dc96e8d-2fd9-41dc-863e-64ea5068192e/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
@@ -129,7 +129,7 @@
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/83253e08-8e4a-4bff-9032-c4e8bc57e2fb/resourceGroups/m2-ne-prod-hub1-spoke2-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke2"
+                                "id": "/subscriptions/d9fd4c4e-0e4b-4bc7-92d4-8cedc84a7bc8/resourceGroups/m2-ne-prod-hub1-spoke2-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke2"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
@@ -182,7 +182,7 @@
                 ],
                 "azureFirewalls": [
                     {
-                        "name": "azfw-ne-prod-hub1-fw",
+                        "name": "azfw1-ne-prod-hub1-fw",
                         "azureFirewallspublicIPAddressName": "azfw-ne-prod-hub1",
                         "properties": {
                             "ipConfigurations": [
