@@ -64,15 +64,15 @@
                         "name": "m2-ne-prod-hub1-spoke1-app1-nsg",
                         "securityRules": [
                             {
-                                "name": "rdp_rule1",
+                                "name": "deny_internet_inbound",
                                 "properties": {
-                                    "description": "Allow RDP",
-                                    "protocol": "Tcp",
+                                    "description": "Deny Internet Inbound",
+                                    "protocol": "*",
                                     "sourcePortRange": "*",
-                                    "destinationPortRange": "3389",
+                                    "destinationPortRange": "*",
                                     "sourceAddressPrefix": "Internet",
                                     "destinationAddressPrefix": "*",
-                                    "access": "Allow",
+                                    "access": "Deny",
                                     "priority": 100,
                                     "direction": "Inbound",
                                     "sourceApplicationSecurityGroups": "",
