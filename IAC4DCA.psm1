@@ -1,3 +1,5 @@
+$global:AzureRmManagementGroup = @()
+
 function Move-LocalManagementGroupParentToSameAsInAzure(
     [string] $managementgroupname = "",        
     [string] $managementgrouplocalfolderpath = "",
@@ -224,8 +226,28 @@ function New-IAC4DCASubsriptionProvisioning(    $subscriptionName = "Hub for Nor
 
 }
 
-function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative = $true,
+function PopulateManagementGroup ($mgmtgroupname)
+{
 
+    Write-Host "Management Group: $mgmtgroupname"
+
+    
+    foreach ($childmgmtgroup in (Get-AzureRmManagementGroup -GroupName $mgmtgroupname -Expand -Recurse).Children)
+    {
+        if($childmgmtgroup.Type -eq '/providers/Microsoft.Management/managementGroups')
+        {
+            PopulateManagementGroup -mgmtgroupname $childmgmtgroup.Name
+        }
+    }
+
+    $global:AzureRmManagementGroup +=  (Get-AzureRmManagementGroup -GroupName $mgmtgroupname -Expand -Recurse)
+
+}
+
+
+
+
+function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative = $true,
                                                            $TenantRootId = 'b2a0bb8e-3f26-47f8-9040-209289b412a8', 
                                                            $TenantRootname = 'root',
                                                            $MgmtRootFolderPath = "C:\git\FireLake",
@@ -249,7 +271,9 @@ function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative
     }
     else {
         #Push Local Folder Structure to Azure
-        $global:AzureRmManagementGroup = (Get-AzureRmManagementGroup) |% { Get-AzureRmManagementGroup -GroupName $_.Name -Expand } 
+        #$global:AzureRmManagementGroup = (Get-AzureRmManagementGroup) |% { Get-AzureRmManagementGroup -GroupName $_.Name -Expand } 
+        
+        PopulateManagementGroup -mgmtgroupname $TenantRootId
 
     
         #Parent will alawys exist due to how recurse works
