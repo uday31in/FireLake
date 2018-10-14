@@ -129,7 +129,7 @@
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
+                                "id": "/subscriptions/970b9212-d21d-474e-a251-8733e97d358c/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",

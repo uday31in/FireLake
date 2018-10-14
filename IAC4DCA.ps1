@@ -8,11 +8,11 @@
 [switch] $TemplateDeployment,
 
 $AzureIsAuthoritative = $true,
-$TenantRootId = 'b590c310-f80d-4c5b-981f-7dc9c87ea414',
+$TenantRootId = 'd6ad82f3-42af-4a15-ac1e-49e6c08f624e',
 $TenantRootname = 'root',
 $TenantManagementGroupRoot = "M2",
 $vstsAAObjectID = (Get-AzureRmADServicePrincipal -SearchString 'iaac4dcm-cd4dcm-M2').Id,
-$mgmtSubscriptionID= "bb81881b-d6a7-4590-b14e-bb3c575e42c5",
+$mgmtSubscriptionID= "4b7561c1-24a7-468f-8b80-bf79cc29d48b",
 [string]$managementgrouptofind = ""
 
 
