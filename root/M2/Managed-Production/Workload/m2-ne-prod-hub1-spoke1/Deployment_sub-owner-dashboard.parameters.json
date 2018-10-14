@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgName": {
+            "value": "m2-ne-prod-hub1-spoke1-dashb"
+        },
+        "rgLocation": {
+            "value": "northeurope"
+        },
+        "closestWorkspaceResourceId": {
+            "value": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-oms-europe/providers/Microsoft.OperationalInsights/workspaces/m2-oms-westeurope"
+        }
+    }
+}
