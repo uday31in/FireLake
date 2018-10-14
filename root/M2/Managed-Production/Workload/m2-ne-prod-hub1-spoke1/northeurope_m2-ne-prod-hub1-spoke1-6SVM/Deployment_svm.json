@@ -20,7 +20,7 @@
         "description": "tier1 Name Prefix"
       }
     },
-    "tinerXsubnetID": {
+    "tierXsubnetID": {
       "type": "string",
       "defaultValue": "/subscriptions/0dc96e8d-2fd9-41dc-863e-64ea5068192e/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1/subnets/m2-ne-prod-hub1-spoke1-app3"
     },
@@ -76,9 +76,9 @@
   "variables": {
     "numberOfInstances": "[parameters('numberOfInstances')]",
     "vmSize": "Standard_DS1_v2",
-    "networkresourcegroupname": "[last(take(split(parameters('tinerXsubnetID'),'/'),5))]",
+    "networkresourcegroupname": "[last(take(split(parameters('tierXsubnetID'),'/'),5))]",
     "tierXNamePrefix": "[concat(last(split(resourceGroup().name,'-')) ,'-' , parameters('tierXNamePrefix') )]",
-    "tierXVMSubnetRef": "[parameters('tinerXsubnetID')]",
+    "tierXVMSubnetRef": "[parameters('tierXsubnetID')]",
     "tierXnsgID": "[resourceId('Microsoft.Network/networkSecurityGroups',concat(variables('tierXNamePrefix'),'-app-nsg'))]",
     "operatingSystemValues": {
       "Server2012R2": {
