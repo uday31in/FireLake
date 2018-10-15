@@ -1,0 +1,51 @@
+{
+    "properties": {
+        "displayName": "Deny inbound RDP rule in NSG",
+        "description": "Policy to deny inbound RDP rule in NSG",
+        "parameters": {},
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Network/networkSecurityGroups/securityRules"
+                    },
+                    {
+                        "allOf": [
+                            {
+                                "field": "Microsoft.Network/networkSecurityGroups/securityRules/access",
+                                "equals": "Allow"
+                            },
+                            {
+                                "field": "Microsoft.Network/networkSecurityGroups/securityRules/direction",
+                                "equals": "Inbound"
+                            },
+                            {
+                                "anyOf": [
+                                    {
+                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules/destinationPortRange",
+                                        "equals": "3389"
+                                    }
+                                ]
+                            },
+                            {
+                                "anyOf":[
+                                    {
+                                        "field": "Microsoft.Network/networkSecurityGroups/securityRules/sourceAddressPrefix",
+                                        "in": [
+                                            "*",
+                                            "Internet"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    }
+}
