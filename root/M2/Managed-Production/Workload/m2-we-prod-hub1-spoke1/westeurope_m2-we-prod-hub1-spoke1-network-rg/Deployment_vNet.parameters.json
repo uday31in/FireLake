@@ -7,9 +7,9 @@
                 "vnetName": "m2-we-prod-hub1-spoke1",
                 "vnetAddressPrefix": "10.2.16.0/20",
                 "dnsServers": [
+                    "10.2.2.4",
                     "10.1.15.4",
-                    "10.1.15.5",
-                    "10.2.2.4"
+                    "10.1.15.5"                    
                 ],
                 "subnetlist": [
                     {
