@@ -19,90 +19,98 @@
         "vmInsightsPerfCounters": {
             "windowsArray": [
                 {
+                    "armName": "counter1",
                     "objectName": "LogicalDisk",
                     "counterName": "% Free Space",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter2",
                     "objectName": "LogicalDisk",
                     "counterName": "Avg. Disk sec/Read",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter3",
                     "objectName": "LogicalDisk",
                     "counterName": "Avg. Disk sec/Transfer",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter4",
                     "objectName": "LogicalDisk",
                     "counterName": "Avg. Disk sec/Write",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
-                    "objectName": "LogicalDisk",
-                    "counterName": "Avg. Disk sec/Write",
-                    "instanceName": "*",
-                    "intervalSeconds": 10
-                },
-                {
+                    "armName": "counter5",
                     "objectName": "LogicalDisk",
                     "counterName": "Disk Read Bytes/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter6",
                     "objectName": "LogicalDisk",
                     "counterName": "Disk Reads/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter7",
                     "objectName": "LogicalDisk",
                     "counterName": "Disk Transfers/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter8",
                     "objectName": "LogicalDisk",
                     "counterName": "Disk Write Bytes/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter9",
                     "objectName": "LogicalDisk",
                     "counterName": "Disk Writes/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter10",
                     "objectName": "LogicalDisk",
                     "counterName": "Free Megabytes",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter11",
                     "objectName": "Memory",
                     "counterName": "Available MBytes",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter12",
                     "objectName": "Network Adapter",
                     "counterName": "Bytes Received/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter13",
                     "objectName": "Network Adapter",
                     "counterName": "Bytes Sent/sec",
                     "instanceName": "*",
                     "intervalSeconds": 10
                 },
                 {
+                    "armName": "counter14",
                     "objectName": "Processor",
                     "counterName": "% Processor Time",
                     "instanceName": "*",
@@ -346,7 +354,7 @@
         {
             "apiVersion": "2015-11-01-preview",
             "type": "Microsoft.OperationalInsights/workspaces/dataSources",
-            "name": "[concat(parameters('workspaceName'), '/', concat('winPerf-', copyIndex()))]",
+            "name": "[concat(parameters('workspaceName'), '/', variables('vmInsightsPerfCounters').windowsArray[copyIndex()].armName)]",
             "kind": "WindowsPerformanceCounter",
             "dependsOn": [
                 "[resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'))]"
@@ -356,7 +364,7 @@
                 "count": "[length(variables('vmInsightsPerfCounters').windowsArray)]"
             },
             "properties": {
-                "ojectName": "[variables('vmInsightsPerfCounters').windowsArray[copyIndex()].objectName]",
+                "objectName": "[variables('vmInsightsPerfCounters').windowsArray[copyIndex()].objectName]",
                 "instanceName": "[variables('vmInsightsPerfCounters').windowsArray[copyIndex()].instanceName]",
                 "intervalSeconds": "[variables('vmInsightsPerfCounters').windowsArray[copyIndex()].intervalSeconds]",
                 "counterName": "[variables('vmInsightsPerfCounters').windowsArray[copyIndex()].counterName]"
