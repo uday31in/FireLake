@@ -6,13 +6,13 @@
               "value": "Off"
         },
         "workspaceName": {
-              "value": "m2-oms-westeurope"
+              "value": ""
         },
         "workspaceSubscriptionId": {
-              "value": "4b7561c1-24a7-468f-8b80-bf79cc29d48b"
+              "value": ""
         },
         "workspaceResourceGroup": {
-              "value": "m2-oms-europe"
+              "value": ""
         },
         "emailSecurityContact": {
               "value": "placeholder@asctest.com"
