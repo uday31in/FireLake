@@ -139,7 +139,7 @@
             }
           },
           {
-            "name": "deny_AllowVnetInBound_rule",
+            "name": "AllowVnetInBound_rule",
             "properties": {
               "description": "deny_AllowVnetInBound_rule",
               "protocol": "*",
