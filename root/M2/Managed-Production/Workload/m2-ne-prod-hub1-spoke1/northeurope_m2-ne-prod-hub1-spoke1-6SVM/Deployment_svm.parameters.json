@@ -1,0 +1,27 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  
+    "windowsadminpassword": {
+      "value" : "!!123abc!!123abc"
+    },
+	
+"domainJoinUserName":  {
+					   "reference":  {
+										 "keyVault":  {
+														  "id":  "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-kv-rg/providers/Microsoft.KeyVault/vaults/m2-ne-prod-hub1-kv"
+													  },
+										 "secretName":  "domainjoin-username1"
+									 }
+				   },
+"domainJoinUserPassword":  {
+						   "reference":  {
+											 "keyVault":  {
+														  "id":  "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-kv-rg/providers/Microsoft.KeyVault/vaults/m2-ne-prod-hub1-kv"
+													  },
+											 "secretName":  "domainjoin-password"
+										 }
+					   }
+  }
+}
