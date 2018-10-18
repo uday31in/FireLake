@@ -1,6 +1,6 @@
 {
     "Name": "DINE-AzMonAzFirewall",
-    "ResourceId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/DINE-AzMonAutomation",
+    "ResourceId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/DINE-AzMonAzFirewall",
     "ResourceName": "M2",
     "ResourceType": "Microsoft.Management/managementgroups",
     "ExtensionResourceName": "DINE-AzMonAzFirewall",
@@ -100,5 +100,5 @@
             }
         }
     },
-    "PolicyDefinitionId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/DINE-AzMonAutomation"
+    "PolicyDefinitionId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/DINE-AzMonAzFirewall"
 }
