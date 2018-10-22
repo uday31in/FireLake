@@ -1,0 +1,21 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "aadds-settings": {
+            "value": {
+               
+                    "domainName" : "m2-adds",
+                    "properties": {
+                        "tenantId": "azuredcx.onmicrosoft.com",                    
+                        "domainName": "m2-aad-ds.local",
+                        "vnetSiteID": "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1",
+                        "subnetId": "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1/subnets/m2-ne-prod-hub1-aad-ds"
+                        
+                    }
+               
+            }
+        }
+    }
+
+}

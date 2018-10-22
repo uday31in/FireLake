@@ -16,17 +16,7 @@
                         "name": "GatewaySubnet",
                         "properties": {
                             "addressPrefix": "10.2.0.0/24"
-                        },
-                        "virtualNetworkGateways": [
-                            {
-                                "name": "vpngateway",
-                                "privateIPAllocationMethod": "Dynamic",
-                                "publicIPAddress": "Dynamic",
-                                "gatewayType": "Vpn",
-                                "vpnType": "RouteBased",
-                                "enableBgp": "true"
-                            }
-                        ]
+                        }
                     },
                     {
                         "name": "AzureFirewallSubnet",
@@ -107,23 +97,75 @@
                         ]
                     }
                 ],
-                "connections": [],
                 "virtualNetworkPeerings": [
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/15e50875-e180-4d16-a8cb-57361c6a3cfb/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1"
+                                "id": "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
                             "allowGatewayTransit": "false",
                             "useRemoteGateways": "false"
                         }
+                    },
+                    {
+                        "properties": {
+                            "remoteVirtualNetwork": {
+                                "id": "/subscriptions/e21ecca9-ad71-4633-80c3-d68637f0fa17/resourceGroups/m2-we-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1-spoke1"
+                            },
+                            "allowVirtualNetworkAccess": "true",
+                            "allowForwardedTraffic": "true",
+                            "allowGatewayTransit": "true",
+                            "useRemoteGateways": "false"
+                        }
+                    }
+                ],
+                "virtualNetworkGateways": [
+                    {
+                        "name": "ergw-we-prod-hub1-gw",
+                        "gatewayPublicIPAddressName": "ergw-we-prod-hub1",
+                        "properties": {
+                            "ipConfigurations": [
+                                {
+                                    "name": "ergwIpConf",
+                                    "properties": {
+                                        "subnet": {
+                                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetDefinition').vnetName, 'gatewaySubnet')]"
+                                        },
+                                        "publicIPAddress": {
+                                            "id": "[resourceId('Microsoft.Network/publicIPAddresses','ergw-we-prod-hub1')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "gatewayType": "ExpressRoute",
+                            "sku": {
+                                "name": "Standard",
+                                "tier": "Standard"
+                            }
+                        }
+                    }
+                ],
+                "connections": [
+                    {
+                        "name": "ercn-we-prod-hub1-seattle",
+                        "properties": {
+                            "authorizationKey": "",
+                            "virtualNetworkGateway1": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworkGateways','ergw-we-prod-hub1-gw')]"
+                            },
+                            "peer": {
+                                "id": ""
+                            },
+                            "connectionType": "ExpressRoute",
+                            "routingWeight": "10"
+                        }
                     }
                 ],
                 "azureFirewalls": [
                     {
-                        "name": "azfw-we-prod-hub1-fw",
+                        "name": "azfw1-we-prod-hub1-fw",
                         "azureFirewallspublicIPAddressName": "azfw-we-prod-hub1",
                         "properties": {
                             "ipConfigurations": [

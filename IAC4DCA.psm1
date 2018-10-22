@@ -1,3 +1,5 @@
+$global:AzureRmManagementGroup = @()
+
 function Move-LocalManagementGroupParentToSameAsInAzure(
     [string] $managementgroupname = "",        
     [string] $managementgrouplocalfolderpath = "",
@@ -224,8 +226,28 @@ function New-IAC4DCASubsriptionProvisioning(    $subscriptionName = "Hub for Nor
 
 }
 
-function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative = $true,
+function PopulateManagementGroup ($mgmtgroupname)
+{
 
+    Write-Host "Management Group: $mgmtgroupname"
+
+    
+    foreach ($childmgmtgroup in (Get-AzureRmManagementGroup -GroupName $mgmtgroupname -Expand -Recurse).Children)
+    {
+        if($childmgmtgroup.Type -eq '/providers/Microsoft.Management/managementGroups')
+        {
+            PopulateManagementGroup -mgmtgroupname $childmgmtgroup.Name
+        }
+    }
+
+    $global:AzureRmManagementGroup +=  (Get-AzureRmManagementGroup -GroupName $mgmtgroupname -Expand -Recurse)
+
+}
+
+
+
+
+function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative = $true,
                                                            $TenantRootId = 'b2a0bb8e-3f26-47f8-9040-209289b412a8', 
                                                            $TenantRootname = 'root',
                                                            $MgmtRootFolderPath = "C:\git\FireLake",
@@ -249,7 +271,9 @@ function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative
     }
     else {
         #Push Local Folder Structure to Azure
-        $global:AzureRmManagementGroup = (Get-AzureRmManagementGroup) |% { Get-AzureRmManagementGroup -GroupName $_.Name -Expand } 
+        #$global:AzureRmManagementGroup = (Get-AzureRmManagementGroup) |% { Get-AzureRmManagementGroup -GroupName $_.Name -Expand } 
+        
+        PopulateManagementGroup -mgmtgroupname $TenantRootId
 
     
         #Parent will alawys exist due to how recurse works
@@ -427,27 +451,7 @@ function Ensure-AzureRMRoleAssignment ($AzureIsAuthoritative = $true, $path = "C
 
             $currentAzureRoleAssignments = Get-AzureRmRoleAssignment -Scope $effectiveScope |?  {$_.Scope -eq $effectiveScope}
 
-            #Assignment that exists in Azure but not locally, should be deleted
-            $currentAzureRoleAssignments |% {
-                $roleassignment = $_            
-                [string] $rolename =  $roleassignment.DisplayName
-                [IO.Path]::GetinvalidFileNameChars() |% {$rolename = $rolename.Replace($_," ")}                          
-                
-                $roleassignmentFileName = Join-path $currentDirectory ("RoleAssignment_" + $roleassignment.RoleDefinitionName + "_" + $rolename + ".json")                               
-                
-                if(Test-path $roleassignmentFileName)
-                {   
-                    #update assignment if file exist
-                    $roleassignment | ConvertTo-Json -Depth 20 | out-file $roleassignmentFileName
-                } 
-                else
-                {
-                    #delete assignment
-                    Remove-AzureRmRoleAssignment -Scope $effectiveScope -RoleDefinitionName $roleassignment.RoleDefinitionName -objectID $roleassignment.objectID                        
-                }  
-                   
-                
-            }
+            
 
             #Push local assignments
             Get-ChildItem -file -Path $currentDirectory RoleAssignment*.json |%{
@@ -499,6 +503,28 @@ function Ensure-AzureRMRoleAssignment ($AzureIsAuthoritative = $true, $path = "C
                 }
             }
             
+
+            #Assignment that exists in Azure but not locally, should be deleted
+            $currentAzureRoleAssignments |% {
+                $roleassignment = $_            
+                [string] $rolename =  $roleassignment.DisplayName
+                [IO.Path]::GetinvalidFileNameChars() |% {$rolename = $rolename.Replace($_," ")}                          
+                
+                $roleassignmentFileName = Join-path $currentDirectory ("RoleAssignment_" + $roleassignment.RoleDefinitionName + "_" + $rolename + ".json")                               
+                
+                if(Test-path $roleassignmentFileName)
+                {   
+                    #update assignment if file exist
+                    $roleassignment | ConvertTo-Json -Depth 20 | out-file $roleassignmentFileName
+                } 
+                else
+                {
+                    #delete assignment
+                    Remove-AzureRmRoleAssignment -Scope $effectiveScope -RoleDefinitionName $roleassignment.RoleDefinitionName -objectID $roleassignment.objectID                        
+                }  
+                   
+                
+            }
            
         }
 
@@ -519,13 +545,13 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
             $currentDirectory = $_.FullName
             Write-Host "Effective Scope: $effectiveScope"
             
-            if(IsManagementGroup (get-item $_.FullName))
+            if(IsManagementGroup ($_.FullName))
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'}  
+                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
             }
             else
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'} 
+                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'  -and  ($_.SubscriptionId -eq ($effectiveScope -split '/' | select -last 1)) }
             }
 
             foreach ($policydefinition in $currentPolicyDefinitionsInAzure) 
@@ -558,6 +584,46 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
             $currentDirectory = $_.FullName
             Write-Host "Effective Scope: $effectiveScope"
 
+            
+
+            #Push local assignments
+            Get-ChildItem -file -Path $currentDirectory PolicyDefinition*.json |%{
+                
+                Write-Host "Filename : $($_.basename)"
+
+                $localassignment = get-content $_.FullName | ConvertFrom-Json
+                
+                [string]$policyname = ($_.basename).replace("PolicyDefinition_", "")
+
+                 if (( Get-Member -InputObject $localassignment -Name Name) -eq $null)
+                 {
+                     $localassignment  | Add-member  -MemberType NoteProperty -Name Name -Value ''
+                 }
+                 $localassignment.Name = $policyname
+                [string]$policyJsonRule = "$($localassignment.Properties.policyRule | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
+                [string]$policyJsonParameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
+
+                               
+                if(IsManagementGroup ($_.DirectoryName))
+                {
+                    Write-Host "New-AzureRmPolicyDefinition  -ManagementGroupName $($_.Directory.Name) -Name $policyname"
+                    $result = New-AzureRmPolicyDefinition -Mode All -ManagementGroupName ($_.Directory.Name) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
+                }
+                else 
+                {
+                    Write-Host "New-AzureRmPolicyDefinition $($_.fullname)"
+                    $result = New-AzureRmPolicyDefinition -Mode All  -SubscriptionId ($effectiveScope -split '/' | select -last 1) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
+                }
+
+                if($result -ne $null)
+                {
+                    $result | ConvertTo-Json -Depth 100 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } |out-file -FilePath $_.FullName
+                }
+                
+            }
+            
+
+            #removign the one from Azure that do not exist locally
             if(IsManagementGroup ($_.FullName))
             {
                 $currentPolicyDefinitionsInAzure = Get-AzureRmPolicyDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
@@ -583,43 +649,8 @@ function Ensure-AzureRMPolicyDefinition ($AzureIsAuthoritative = $true, $path = 
                     Remove-AzureRmPolicyDefinition -Id $policydefinition.ResourceId -force
                                         
                 }  
-                   
                 
             }
-
-            #Push local assignments
-            Get-ChildItem -file -Path $currentDirectory PolicyDefinition*.json |%{
-                
-                Write-Host "Filename : $($_.basename)"
-
-                $localassignment = get-content $_.FullName | ConvertFrom-Json
-                
-                [string]$policyname = ($_.basename).replace("PolicyDefinition_", "")
-                $localassignment.Name = $policyname
-                [string]$policyJsonRule = "$($localassignment.Properties.policyRule | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
-                [string]$policyJsonParameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
-
-                               
-                if(IsManagementGroup ($_.DirectoryName))
-                {
-                    Write-Host "New-AzureRmPolicyDefinition  -ManagementGroupName ($_.Directory.Name) -Name $policyname"
-                    $result = New-AzureRmPolicyDefinition -Mode All -ManagementGroupName ($_.Directory.Name) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
-                }
-                else 
-                {
-                    Write-Host "New-AzureRmPolicyDefinition $($_.fullname)"
-                    $result = New-AzureRmPolicyDefinition -Mode All  -SubscriptionId ($effectiveScope -split '/' | select -last 1) -Name $policyname -Policy $policyJsonRule -Parameter $policyJsonParameters
-                }
-
-                if($result -ne $null)
-                {
-                    $result | ConvertTo-Json -Depth 100 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } |out-file -FilePath $_.FullName
-                }
-                
-
-            }
-            
-           
         }
 
     }
@@ -642,11 +673,11 @@ function Ensure-AzureRMPolicySetDefinition ($AzureIsAuthoritative = $true, $path
             
             if(IsManagementGroup (get-item $_.FullName))
             {
-                $currentPolicySetDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'}  
+                $currentPolicySetDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
             }
             else
             {
-                $currentPolicySetDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'} 
+                $currentPolicySetDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'  -and  ($_.SubscriptionId -eq ($effectiveScope -split '/' | select -last 1)) }            
             }
 
             foreach ($policydefinition in $currentPolicySetDefinitionsInAzure) 
@@ -679,33 +710,16 @@ function Ensure-AzureRMPolicySetDefinition ($AzureIsAuthoritative = $true, $path
             $currentDirectory = $_.FullName
             Write-Host "Effective Scope: $effectiveScope"
 
-            if(IsManagementGroup ($_.FullName))
+            if(IsManagementGroup (get-item $_.FullName))
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'}  
+                $currentPolicySetDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -ManagementGroupName $_.Basename |? {$_.Properties.policyType -ne 'Builtin'  -and ($_.resourcename -eq (get-item -Path $currentDirectory).BaseName) }
             }
             else
             {
-                $currentPolicyDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'} 
+                $currentPolicySetDefinitionsInAzure = Get-AzureRmPolicySetDefinition -Custom -SubscriptionId ($effectiveScope -split '/' | select -last 1) |? {$_.Properties.policyType -ne 'Builtin'  -and  ($_.SubscriptionId -eq ($effectiveScope -split '/' | select -last 1)) }            
             }
 
-            #Assignment that exists in Azure but not locally, should be deleted
-            foreach ($policydefinition in $currentPolicyDefinitionsInAzure) 
-            {                          
-                $policydefinitionFileName = Join-path $currentDirectory ("PolicySetDefinition_" + $policydefinition.Name + ".json")
-                if(Test-path $policydefinitionFileName)
-                {   
-                    #update assignment if file exist
-                    $policydefinition | ConvertTo-Json -Depth 100 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } |out-file -FilePath $policydefinitionFileName
-                } 
-                else
-                {
-                    #delete assignment
-                    Remove-AzureRmPolicySetDefinition -Id $policydefinition.ResourceId -force
-                                        
-                }  
-                   
-                
-            }
+            
 
             #Push local assignments
             Get-ChildItem -file -Path $currentDirectory PolicySetDefinition*.json |%{
@@ -733,6 +747,25 @@ function Ensure-AzureRMPolicySetDefinition ($AzureIsAuthoritative = $true, $path
                 }
 
             }
+
+            #Assignment that exists in Azure but not locally, should be deleted
+            foreach ($policydefinition in $currentPolicySetDefinitionsInAzure) 
+            {                          
+                $policydefinitionFileName = Join-path $currentDirectory ("PolicySetDefinition_" + $policydefinition.Name + ".json")
+                if(Test-path $policydefinitionFileName)
+                {   
+                    #update assignment if file exist
+                    $policydefinition | ConvertTo-Json -Depth 100 | % { [System.Text.RegularExpressions.Regex]::Unescape($_) } |out-file -FilePath $policydefinitionFileName
+                } 
+                else
+                {
+                    #delete assignment
+                    Remove-AzureRmPolicySetDefinition -Id $policydefinition.ResourceId -force
+                                        
+                }  
+                   
+                
+            }
            
         }
 
@@ -758,7 +791,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
             foreach ($policyassignment in $currentPolicyAssignmentsInAzure) 
             {
                 
-                $policyAssignmentFileName = Join-path $currentDirectory ("PolicyAssignment_" + $policyassignment.Name + ".json")
+                $policyAssignmentFileName = Join-path $currentDirectory ("PolicyAssignment_" + $($policyassignment.Properties.displayName) + ".json")
                 $policyassignment | ConvertTo-Json -Depth 100 | out-file -FilePath $policyAssignmentFileName
                
             }
@@ -787,10 +820,61 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
             
             $currentPolicyAssignmentsInAzure = Get-AzureRmPolicyAssignment -Scope $effectiveScope |? {$_.policyassignmentid.contains($effectiveScope)}
 
+          
+            #Push local assignments
+            Get-ChildItem -file -Path $currentDirectory PolicyAssignment*.json |%{
+                
+                $localassignment = get-content $_.FullName | ConvertFrom-Json
+                $policyassignmentname = $localassignment.Properties.displayName
+                $policydefinition = Get-AzureRmPolicyDefinition -Id $localassignment.Properties.policyDefinitionId 
+                $policyassignmentparameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
+
+
+
+
+                $match = ($currentPolicyAssignmentsInAzure |? { $_.name -eq $policyassignmentname }) 
+                if(-not $match)
+                {
+                    Write-Host "New-AzureRmPolicyAssignment $($_.FullName)"
+
+                    if(($localassignment.properties.policyDefinitionId).StartsWith("/providers/Microsoft.Authorization/policySetDefinitions"))
+                    {
+                        
+                         New-AzureRmPolicyAssignment -Scope $effectiveScope `
+                                            -Location 'northeurope' `
+                                            -AssignIdentity `
+                                            -Name $policyassignmentname `
+                                            -DisplayName $policyassignmentname `
+                                            -PolicySetDefinition $policydefinition `
+                                            -PolicyParameter $policyassignmentparameters    
+                    }
+                    else
+                    {
+                  
+                    
+                        New-AzureRmPolicyAssignment -Scope $effectiveScope `
+                                            -Location 'northeurope' `
+                                            -AssignIdentity `
+                                            -Name $policyassignmentname `
+                                            -DisplayName $policyassignmentname `
+                                            -PolicyDefinition $policydefinition `
+                                            -PolicyParameter $policyassignmentparameters    
+
+                    }
+                }
+                else
+                {
+                    
+                    Write-Host "Policy Assignment already exists for $($_.FullName)"
+                    
+                }
+
+            }          
+            
             foreach ($policyassignment in $currentPolicyAssignmentsInAzure) 
             {
                 
-                $policyAssignmentFileName = Join-path $currentDirectory ("PolicyAssignment_" + $policyassignment.Name + ".json")
+                $policyAssignmentFileName = Join-path $currentDirectory ("PolicyAssignment_" + $($policyassignment.Properties.displayName)  + ".json")
 
 
                 if(Test-path $policyAssignmentFileName)
@@ -806,37 +890,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
                     
                 }
                
-            }
-                 
-
-            #Push local assignments
-            Get-ChildItem -file -Path $currentDirectory PolicyAssignment*.json |%{
-                
-                $localassignment = get-content $_.FullName | ConvertFrom-Json
-                $policyassignmentname = $_.BaseName.replace("PolicyAssignment_",'')
-                $policydefinition = Get-AzureRmPolicyDefinition -Id $localassignment.Properties.policyDefinitionId 
-                $policyassignmentparameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
-
-                $Policy = Get-AzureRmPolicyDefinition -BuiltIn | Where-Object {$_.Properties.DisplayName -eq 'Allowed locations'}
-
-                $match = ($currentPolicyAssignmentsInAzure |? { $_.name -eq $policyassignmentname }) 
-                if(-not $match)
-                {
-                    Write-Host "New-AzureRmPolicyAssignment $($_.FullName)"
-                    New-AzureRmPolicyAssignment -Scope $effectiveScope `
-                                            -Location 'northeurope' `
-                                            -AssignIdentity `
-                                            -Name $policyassignmentname `
-                                            -DisplayName $policyassignmentname `
-                                            -PolicyDefinition $policydefinition `
-                                            -PolicyParameter $policyassignmentparameters    
-                }
-                else
-                {
-                    Write-Host "Policy Assignment already exists for $($_.FullName)"
-                }
-
-            }            
+            }  
            
         }
 
@@ -898,21 +952,7 @@ function Ensure-AzureRMRoleDefinition ($AzureIsAuthoritative = $true, $path = "C
             {
         
                 $currentAzureRoleDefinition = Get-AzureRmRoleDefinition -Custom -Scope "/subscriptions/$managementsubscriptionID"
-                foreach($roledefinitioninAzure in $currentAzureRoleDefinition)
-                {
-                          
-                    $roledefinitioninAzureFileName = Join-path $currentDirectory.DirectoryName ("RoleDefinition_" + $roledefinitioninAzure.Name + ".json")
-                    
-                    if(Test-Path $roledefinitioninAzureFileName)
-                    {
-                        $roledefinitioninAzure | ConvertTo-Json -Depth 20 | out-file $roledefinitioninAzureFileName
-                    }
-                    else
-                    {
-                        Remove-AzureRmRoleDefinition -Scope "/subscriptions/$managementsubscriptionID" -Name $roledefinitioninAzure.Name -Force -Confirm:$false
-                    }
                
-                }
                  #Push local assignments
                 Get-ChildItem -file -Path $currentDirectory.DirectoryName RoleDefinition*.json |%{
                     
@@ -921,7 +961,7 @@ function Ensure-AzureRMRoleDefinition ($AzureIsAuthoritative = $true, $path = "C
 
                     $localassignment.Name = $rolename
                     $localassignment.Description = $rolename
-                    $localassignment.AssignableScopes = getAllSubscriptionUnderManagementGroup -name $path |% {getscope $_.Directoryname}
+                    $localassignment.AssignableScopes += getAllSubscriptionUnderManagementGroup -name $path |% {getscope $_.Directoryname}
 
 
                      $match = ($currentAzureRoleDefinition |? { $_.name -eq $localassignment.name}) 
@@ -938,6 +978,23 @@ function Ensure-AzureRMRoleDefinition ($AzureIsAuthoritative = $true, $path = "C
                     #Saving update role definition with possibly new ID
                     $return | ConvertTo-Json -Depth 20 | out-file $_.FullName
                 
+                }
+
+                
+                foreach($roledefinitioninAzure in $currentAzureRoleDefinition)
+                {
+                          
+                    $roledefinitioninAzureFileName = Join-path $currentDirectory.DirectoryName ("RoleDefinition_" + $roledefinitioninAzure.Name + ".json")
+                    
+                    if(Test-Path $roledefinitioninAzureFileName)
+                    {
+                        $roledefinitioninAzure | ConvertTo-Json -Depth 20 | out-file $roledefinitioninAzureFileName
+                    }
+                    else
+                    {
+                        Remove-AzureRmRoleDefinition -Scope "/subscriptions/$managementsubscriptionID" -Name $roledefinitioninAzure.Name -Force -Confirm:$false
+                    }
+               
                 }
                     
             }
@@ -1037,13 +1094,14 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
                
                     if($deploymentparameterfilename -ne "")
                     {
+                        <#
                         $testresult = Test-AzureRmResourceGroupDeployment `
                                                            -Mode Incremental `
                                                            -ResourceGroupName $rgname `
                                                            -TemplateFile $_.FullName `
                                                            -TemplateParameterFile $deploymentparameterfilename 
                                                            
-
+                        #>
                         New-AzureRmResourceGroupDeployment -Name $deploymentname `
                                                            -Mode Incremental `
                                                            -ResourceGroupName $rgname `

@@ -3,31 +3,31 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
        "autoProvisioning": {
-              "value": "off"
+              "value": "Off"
         },
         "workspaceName": {
-              "value": "off"
+              "value": "m2-oms-westeurope"
         },
         "workspaceSubscriptionId": {
-              "value": "off"
+              "value": "4b7561c1-24a7-468f-8b80-bf79cc29d48b"
         },
         "workspaceResourceGroup": {
-              "value": "off"
+              "value": "m2-oms-europe"
         },
         "emailSecurityContact": {
-              "value": "off"
+              "value": "placeholder@asctest.com"
         },
         "phoneSecurityContact": {
-              "value": "off"
+              "value": "Off"
         },
         "alertNotifications": {
-              "value": "off"
+              "value": "Off"
         },
          "alertsToAdmin": {
-              "value": "off"
+              "value": "Off"
         },
         "securitySettings": {
-              "value": "on"
+              "value": "On"
         }
     }
   }

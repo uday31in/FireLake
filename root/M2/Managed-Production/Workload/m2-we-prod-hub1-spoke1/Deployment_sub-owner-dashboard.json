@@ -1,0 +1,197 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgName": {
+            "type": "string"
+        },
+        "rgLocation": {
+            "type": "string"
+        },
+        "closestWorkspaceResourceId": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2018-05-01",
+            "type": "Microsoft.Resources/resourceGroups",
+            "name": "[parameters('rgName')]",
+            "location": "[parameters('rgLocation')]",
+            "properties": {}
+        },
+        {
+            "apiVersion": "2018-05-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "dashboard",
+            "resourceGroup": "[parameters('rgName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2015-08-01-preview",
+                            "type": "Microsoft.Portal/dashboards",
+                            "name": "[toLower(concat(guid('user'), deployment().name))]",
+                            "location": "[parameters('rgLocation')]",
+                            "tags": {
+                                "hidden-title": "[concat('Subscription Owner', ' ', subscription().subscriptionId)]"
+                            },
+                            "properties": {
+                                "lenses": {
+                                    "0": {
+                                        "order": 0,
+                                        "parts": {
+                                            "0": {
+                                                "position": {
+                                                    "x": 0,
+                                                    "y": 0,
+                                                    "rowSpan": 2,
+                                                    "colSpan": 4
+                                                },
+                                                "metadata": {
+                                                    "inputs": [
+                                                        {
+                                                            "name": "subscriptionId",
+                                                            "value": "[subscription().subscriptionId]",
+                                                            "isOptional": true
+                                                        }
+                                                    ],
+                                                    "type": "Extension/Microsoft_Azure_Billing/PartType/BillingSubscriptionTile",
+                                                    "defaultMenuItemId": "overview"
+                                                }
+                                            },
+                                            "1": {
+                                                "position": {
+                                                    "x": 4,
+                                                    "y": 0,
+                                                    "rowSpan": 1,
+                                                    "colSpan": 2
+                                                },
+                                                "metadata": {
+                                                    "inputs": [
+                                                        {
+                                                            "name": "queryInputs",
+                                                            "isOptional": true
+                                                        }
+                                                    ],
+                                                    "type": "Extension/Microsoft_Azure_ActivityLog/PartType/ActivityLogPart",
+                                                    "defaultMenuItemId": "activityLog"
+                                                }
+                                            },
+                                            "2": {
+                                                "position": {
+                                                    "x": 6,
+                                                    "y": 0,
+                                                    "rowSpan": 1,
+                                                    "colSpan": 2
+                                                },
+                                                "metadata": {
+                                                    "inputs": [
+                                                        {
+                                                            "name": "id",
+                                                            "value": "[parameters('closestWorkspaceResourceId')]"
+                                                        }
+                                                    ],
+                                                    "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/WorkspacePart",
+                                                    "asset": {
+                                                        "idInputName": "id",
+                                                        "type": "Workspace"
+                                                    },
+                                                    "defaultMenuItemId": "Overview"
+                                                }
+                                            },
+                                            "3": {
+                                                "position": {
+                                                    "x": 4,
+                                                    "y": 1,
+                                                    "rowSpan": 3,
+                                                    "colSpan": 4
+                                                },
+                                                "metadata": {
+                                                    "inputs": [
+                                                        {
+                                                            "name": "queryInputs",
+                                                            "value": {
+                                                                "subscriptions": "0dc96e8d-2fd9-41dc-863e-64ea5068192e",
+                                                                "regions": "eastus;eastus2;northeurope;westeurope;global",
+                                                                "services": "",
+                                                                "resourceGroupId": "all",
+                                                                "timeSpan": "5",
+                                                                "startTime": "2018-10-10T15:08:35.770Z",
+                                                                "endTime": "2018-10-13T15:08:35.770Z",
+                                                                "queryName": "SubOwner",
+                                                                "queryId": "772c4f22-ae83-42ac-a660-4e38ec8a21bb",
+                                                                "loadFromCache": false,
+                                                                "communicationType": "incident",
+                                                                "statusFilter": "active"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "type": "Extension/Microsoft_Azure_Health/PartType/ServiceIssuesTilePart"
+                                                }
+                                            },
+                                            "4": {
+                                                "position": {
+                                                    "x": 0,
+                                                    "y": 2,
+                                                    "rowSpan": 2,
+                                                    "colSpan": 2
+                                                },
+                                                "metadata": {
+                                                    "inputs": [
+                                                        {
+                                                            "name": "scopeId",
+                                                            "value": "[subscription().id]"
+                                                        }
+                                                    ],
+                                                    "type": "Extension/Microsoft_Azure_Billing/PartType/BudgetsPinnedPart",
+                                                    "defaultMenuItemId": "budgets"
+                                                }
+                                            },
+                                            "5": {
+                                                "position": {
+                                                    "x": 2,
+                                                    "y": 2,
+                                                    "rowSpan": 2,
+                                                    "colSpan": 2
+                                                },
+                                                "metadata": {
+                                                    "inputs": [],
+                                                    "type": "Extension/Microsoft_Azure_Expert/PartType/AzureAdvisorPart",
+                                                    "defaultMenuItemId": "advisorRecommendations"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "metadata": {
+                                    "model": {
+                                        "timeRange": {
+                                            "value": {
+                                                "relative": {
+                                                    "duration": 24,
+                                                    "timeUnit": 1
+                                                }
+                                            },
+                                            "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "outputs": {}
+                }
+            }
+        }
+    ]
+}

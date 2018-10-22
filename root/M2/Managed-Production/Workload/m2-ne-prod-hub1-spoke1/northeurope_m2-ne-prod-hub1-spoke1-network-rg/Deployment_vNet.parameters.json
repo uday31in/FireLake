@@ -8,7 +8,7 @@
                 "vnetAddressPrefix": "10.1.16.0/20",
                 "dnsServers": [
                     "10.1.2.4",
-                    "10.1.15.4",
+					"10.1.15.4",
                     "10.1.15.5"
                 ],
                 "subnetlist": [
@@ -64,15 +64,15 @@
                         "name": "m2-ne-prod-hub1-spoke1-app1-nsg",
                         "securityRules": [
                             {
-                                "name": "rdp_rule1",
+                                "name": "deny_internet_inbound",
                                 "properties": {
-                                    "description": "Allow RDP",
-                                    "protocol": "Tcp",
+                                    "description": "Deny Internet Inbound",
+                                    "protocol": "*",
                                     "sourcePortRange": "*",
-                                    "destinationPortRange": "3389",
+                                    "destinationPortRange": "*",
                                     "sourceAddressPrefix": "Internet",
                                     "destinationAddressPrefix": "*",
-                                    "access": "Allow",
+                                    "access": "Deny",
                                     "priority": 100,
                                     "direction": "Inbound",
                                     "sourceApplicationSecurityGroups": "",
@@ -129,12 +129,12 @@
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/15e50875-e180-4d16-a8cb-57361c6a3cfb/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1"
+                                "id": "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
                             "allowGatewayTransit": "false",
-                            "useRemoteGateways": "false"
+                            "useRemoteGateways": "true"
                         }
                     }
                 ],

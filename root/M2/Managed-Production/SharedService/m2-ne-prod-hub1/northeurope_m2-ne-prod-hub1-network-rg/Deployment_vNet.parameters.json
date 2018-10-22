@@ -8,25 +8,16 @@
                 "vnetAddressPrefix": "10.1.0.0/20",
                 "dnsServers": [
                     "10.1.2.4",
-                    "10.1.15.4",
+					"10.1.15.4",
                     "10.1.15.5"
+                   
                 ],
                 "subnetlist": [
                     {
                         "name": "GatewaySubnet",
                         "properties": {
                             "addressPrefix": "10.1.0.0/24"
-                        },
-                        "virtualNetworkGateways": [
-                            {
-                                "name": "vpngateway",
-                                "privateIPAllocationMethod": "Dynamic",
-                                "publicIPAddress": "Dynamic",
-                                "gatewayType": "Vpn",
-                                "vpnType": "RouteBased",
-                                "enableBgp": "true"
-                            }
-                        ]
+                        }
                     },
                     {
                         "name": "AzureFirewallSubnet",
@@ -113,12 +104,11 @@
                         ]
                     }
                 ],
-                "connections": [],
                 "virtualNetworkPeerings": [
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/926ab52d-a877-4db3-b0f9-2e9f8ecbe4c4/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
+                                "id": "/subscriptions/970b9212-d21d-474e-a251-8733e97d358c/resourceGroups/m2-we-prod-hub1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-we-prod-hub1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
@@ -129,18 +119,18 @@
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/c14f781e-159f-45b9-9538-56d9dd32d5e0/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1"
+                                "id": "/subscriptions/0dc96e8d-2fd9-41dc-863e-64ea5068192e/resourceGroups/m2-ne-prod-hub1-spoke1-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke1"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
-                            "allowGatewayTransit": "false",
+                            "allowGatewayTransit": "true",
                             "useRemoteGateways": "false"
                         }
                     },
                     {
                         "properties": {
                             "remoteVirtualNetwork": {
-                                "id": "/subscriptions/83253e08-8e4a-4bff-9032-c4e8bc57e2fb/resourceGroups/m2-ne-prod-hub1-spoke2-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke2"
+                                "id": "/subscriptions/d9fd4c4e-0e4b-4bc7-92d4-8cedc84a7bc8/resourceGroups/m2-ne-prod-hub1-spoke2-network-rg/providers/Microsoft.Network/virtualNetworks/m2-ne-prod-hub1-spoke2"
                             },
                             "allowVirtualNetworkAccess": "true",
                             "allowForwardedTraffic": "true",
@@ -149,9 +139,51 @@
                         }
                     }
                 ],
+                "virtualNetworkGateways": [
+                    {
+                        "name": "ergw-ne-prod-hub1-gw",
+                        "gatewayPublicIPAddressName": "ergw-ne-prod-hub1",
+                        "properties": {
+                            "ipConfigurations": [
+                                {
+                                    "name": "ergwIpConf",
+                                    "properties": {
+                                        "subnet": {
+                                            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vNetDefinition').vnetName, 'gatewaySubnet')]"
+                                        },
+                                        "publicIPAddress": {
+                                            "id": "[resourceId('Microsoft.Network/publicIPAddresses','ergw-ne-prod-hub1')]"
+                                        }
+                                    }
+                                }
+                            ],
+                            "gatewayType": "ExpressRoute",
+                            "sku": {
+                                "name": "Standard",
+                                "tier": "Standard"
+                            }
+                        }
+                    }
+                ],
+                "connections": [
+                    {
+                        "name": "ercn-ne-prod-hub1-seattle",                        
+                        "properties": {
+                            "authorizationKey": "",
+                            "virtualNetworkGateway1": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworkGateways','ergw-ne-prod-hub1-gw')]"
+                            },
+                            "peer": {
+                                "id": ""
+                            },
+                            "connectionType": "ExpressRoute",
+                            "routingWeight": "10"
+                        }
+                    }
+                ],
                 "azureFirewalls": [
                     {
-                        "name": "azfw-ne-prod-hub1-fw",
+                        "name": "azfw1-ne-prod-hub1-fw",
                         "azureFirewallspublicIPAddressName": "azfw-ne-prod-hub1",
                         "properties": {
                             "ipConfigurations": [
@@ -191,6 +223,29 @@
                                                 "targetUrls": [
                                                     "*microsoft.com"
                                                 ]
+                                            },
+                                            {
+                                                "name": "aad-proxy",
+                                                "protocols": [
+                                                    {
+                                                        "port": "80",
+                                                        "protocolType": "http"
+                                                    },
+                                                    {
+                                                        "port": "443",
+                                                        "protocolType": "https"
+                                                    }
+                                                ],
+                                                "targetUrls": [
+                                                    "*.msappproxy.net",
+                                                    "*.servicebus.windows.net",
+                                                    "login.windows.net",
+                                                    "login.microsoftonline.com",
+                                                    "mscrl.microsoft.com",
+                                                    "crl.microsoft.com",
+                                                    "ocsp.msocsp.com",
+                                                    "www.microsoft.com"
+                                                ]
                                             }
                                         ]
                                     }
@@ -206,18 +261,33 @@
                                         },
                                         "rules": [
                                             {
-                                                "name": "netRule1",
+                                                "name": "Hub1Spoke1-to-Hub1Spoke2",
                                                 "protocols": [
-                                                    "TCP"
+                                                    "Any"
                                                 ],
                                                 "sourceAddresses": [
-                                                    "192.168.2.0/24"
+                                                    "10.1.16.0/20"
                                                 ],
                                                 "destinationAddresses": [
-                                                    "*"
+                                                    "10.1.32.0/20"
                                                 ],
                                                 "destinationPorts": [
-                                                    "8000-8999"
+                                                    "*"
+                                                ]
+                                            },
+                                            {
+                                                "name": "Hub1Spoke2-to-Hub1Spoke1",
+                                                "protocols": [
+                                                    "Any"
+                                                ],
+                                                "sourceAddresses": [
+                                                    "10.1.32.0/20"
+                                                ],
+                                                "destinationAddresses": [
+                                                    "10.1.16.0/20"
+                                                ],
+                                                "destinationPorts": [
+                                                    "*"
                                                 ]
                                             }
                                         ]

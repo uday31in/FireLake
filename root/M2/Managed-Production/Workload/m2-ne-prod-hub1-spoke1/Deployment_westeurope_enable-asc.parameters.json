@@ -1,0 +1,33 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+       "autoProvisioning": {
+              "value": "off"
+        },
+        "workspaceName": {
+              "value": "off"
+        },
+        "workspaceSubscriptionId": {
+              "value": "off"
+        },
+        "workspaceResourceGroup": {
+              "value": "off"
+        },
+        "emailSecurityContact": {
+              "value": "off"
+        },
+        "phoneSecurityContact": {
+              "value": "off"
+        },
+        "alertNotifications": {
+              "value": "off"
+        },
+         "alertsToAdmin": {
+              "value": "off"
+        },
+        "securitySettings": {
+              "value": "on"
+        }
+    }
+  }
