@@ -30,6 +30,8 @@ if [ -e /var/log/addj.success ]
 then
   echo "File Already exists at /var/log/addj.success "
 else
+  echo "Wait for 30 seconds to startup"
+  sleep 30s 
   realm discover $DOMAINNAME
   echo '$DOMAINJOINPASSWORD' | kinit $DOMAINJOINUSERNAME
   realm join --verbose $DOMAINNAME
@@ -47,6 +49,7 @@ Requires=realmd.service
 
 [Service]
 ExecStart=/var/lib/waagent/addj.sh
+Type=oneshot
 
 [Install]
 WantedBy=default.target
