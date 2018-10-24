@@ -2,67 +2,34 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "hubsettings": {
-            "type": "object"            
+        "dnsZones": {
+            "type": "object"
         }
-        
-    },
-    "variables": {
-        "dnszoneslookup": {
-            "true": "[parameters('hubsettings').dnszones]",
-            "false": [{
-                "name": "dnszoneslookup",
-                "properties": {}
-            }]
-          },
-          "dnszones": "[variables('dnszoneslookup')[string(greater(length(parameters('hubsettings').dnszones), 0))]]"
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments", 
             "apiVersion": "2018-05-01",
-            "name": "[concat('AzureDNS', '')]",
-            "condition": "[greater(length(parameters('hubsettings').dnszones),0)]",
-            
+            "type": "Microsoft.Network/dnsZones",
+            "name": "[parameters('dnsZones').name]",
+            "location": "global",
+            "dependsOn": [],
+            "properties": "[parameters('dnsZones').properties]"
+        },
+        {
             "copy": {
-              "name": "iterator",
-              "count": "[length(variables('dnszones'))]",
-              "mode": "Parallel"
+                "name": "arecordscopy",
+                "count": "[length(parameters('dnsZones').aRecords)]"
             },
-            "properties": {
-              "mode": "Incremental",
-              "template": {
-                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-                "contentVersion": "1.0.0.0",
-                "parameters": {           
-                  "hubsettings": {
-                    "type": "object",
-                    "metadata": {
-                      "description": "Azure region where the hub will be deployed"
-                    }
-                  }
-                },
-                "variables": {},
-                "resources": [
-                    {
-                        "type": "Microsoft.Network/dnszones",
-                        "name": "[variables('dnszones')[copyIndex()].name]",
-                        "apiVersion": "2016-04-01",
-                        "location": "global",
-                        "properties": {}
-                    }                    
-                ]
-              },
-              "parameters":{
-                "hubsettings": {
-                  "value": "[parameters('hubsettings')]"
-                }
-              }
-            }        
+            "condition": "[greater(length(parameters('dnsZones').aRecords),0)]",
+            "apiVersion": "2018-05-01",
+            "type": "Microsoft.Network/dnsZones/A",
+            "name": "[concat(parameters('dnsZones').name, '/', parameters('dnsZones').aRecords[copyIndex('arecordscopy')].name)]",
+            "location": "global",
+            "dependsOn": [
+                "[parameters('dnsZones').name]"
+            ],
+            "properties": "[parameters('dnsZones').aRecords[copyIndex('arecordscopy')].properties]"
         }
     ],
-    "outputs": {
-        
-    }
+    "outputs": {}
 }
-

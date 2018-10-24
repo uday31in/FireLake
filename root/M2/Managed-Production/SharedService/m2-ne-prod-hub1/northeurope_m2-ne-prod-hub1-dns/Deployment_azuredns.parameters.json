@@ -2,42 +2,47 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "hubsettings": {
+        "dnsZones": {
             "value": {
-                "dnszones":[
+                "name": "nwtraders.local",
+                "properties": {
+                    "registrationVirtualNetworks": [
+                        {
+                            "id": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Network/virtualNetworks/<vnetname>"
+                        }
+                    ],
+                    "resolutionVirtualNetworks": [
+                        {
+                            "id": "/subscriptions/<subid>/resourceGroups/<rgname>/providers/Microsoft.Network/virtualNetworks/<vnetname>"
+                        }
+                    ],
+                    "zoneType": "Private"
+                },
+                "aRecords": [
                     {
-                        "name": "azure.m2-adds.local",                        
-                        "records":[
-                            {
-                                "type": "a",
-                                "name": "testrecord",
-                                "properties": {
-                                    "TTL": 3600,
-                                    "ARecords": [
-                                      {
-                                        "ipv4Address": "1.2.3.4"
-                                      },
-                                      {
-                                        "ipv4Address": "1.2.3.5"
-                                      }
-                                    ]
-                                  }
-                            },
-                            {
-                                "type": "CNAME",
-                                "name": "testcname",
-                                "properties": {
-                                    "TTL": 3600,
-                                    "CNAMERecord": {
-                                        "cname": "testrecord.aadsdelegated.m2-aadds.local"
-                                      }
-                                    }
-                            }
-                        ]
+                        "name": "db",
+                        "properties": {
+                            "TTL": 3600,
+                            "ARecords": [
+                                {
+                                    "ipv4Address": "10.2.0.4"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "app",
+                        "properties": {
+                            "TTL": 3600,
+                            "ARecords": [
+                                {
+                                    "ipv4Address": "10.2.0.5"
+                                }
+                            ]
+                        }
                     }
                 ]
             }
         }
     }
-
 }
