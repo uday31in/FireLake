@@ -43,7 +43,7 @@ chmod +x $OUTFILE
 #Creating Unit
 cat <<domainjoinunit > /usr/lib/systemd/system/addj.service
 [Unit]
-After=realmd.service
+Requires=realmd.service
 
 [Service]
 ExecStart=/var/lib/waagent/addj.sh
