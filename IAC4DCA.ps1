@@ -40,6 +40,7 @@ Write-Host "Using Current Path: $path"
 Write-Host "BUILD_REPOSITORY_LOCALPATH: $env:BUILD_REPOSITORY_LOCALPATH"
 Write-Host "BUILD_SOURCESDIRECTORY: $env:BUILD_SOURCESDIRECTORY"
 Write-Host "falgDeleteIfNecessary : $falgDeleteIfNecessary"
+
 Write-Host "pathtoManangementGroup : $pathtoManangementGroup"
 Write-Host "mgmtSubscriptionPath: $mgmtSubscriptionPath"
 
