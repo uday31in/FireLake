@@ -1,0 +1,37 @@
+{
+    "builders": [{
+      "type": "azure-arm",
+  
+      "client_id": "",
+      "client_secret": "",
+      "tenant_id": "",
+      "subscription_id": "",
+  
+      "managed_image_resource_group_name": "m2-packer",
+      "managed_image_name": "m2-RHEL-74",
+  
+      "os_type": "Linux",
+      "image_publisher": "RedHat",
+      "image_offer": "RHEL",
+      "image_sku": "7.4",
+  
+      "azure_tags": {
+          "dept": "Engineering",
+          "task": "Image deployment"
+      },
+  
+      "location": "West Europe",
+      "vm_size": "Standard_DS2_v2"
+    }],
+    "provisioners": [{
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
+      "inline": [
+        "apt-get update",
+        "apt-get upgrade -y",
+        "sed 's/Provisioning.UseCloudInit=n/Provisioning.UseCloudInit=y/g' /etc/waagent.conf",  
+        "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
+      ],
+      "inline_shebang": "/bin/sh -x",
+      "type": "shell"
+    }]
+  }
