@@ -1,0 +1,34 @@
+{
+    "Name": "Deny-BP-resources",
+    "ResourceId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/Deny-BP-resources",
+    "ResourceName": "M2",
+    "ResourceType": "Microsoft.Management/managementgroups",
+    "ExtensionResourceName": "Deny-BP-resources",
+    "ExtensionResourceType": "Microsoft.Authorization/policyDefinitions",
+    "Properties": {
+        "policyType": "Custom",
+        "mode": "All",
+        "parameters": {},
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "in": [
+                            "Microsoft.Blueprint/blueprints",
+                            "Microsoft.Blueprint/blueprints/artifacts",
+                            "Microsoft.Blueprint/blueprints/versions",
+                            "Microsoft.Blueprint/versions/artifacts",
+                            "Microsoft.Blueprint/blueprintAssignments",
+                            "Microsoft.Blueprint/"
+                        ]
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deny"
+            }
+        }
+    },
+    "PolicyDefinitionId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/Deny-BP-resources"
+}
