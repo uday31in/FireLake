@@ -1146,7 +1146,7 @@ function Ensure-AzureRMRGDeployment ($AzureIsAuthoritative = $true, $path = "C:\
                     }
                     elseif(Test-Path -Path "$($_.FullName.Replace($_.Extension,'')).parameters.json")
                     {
-                        (Test-Path -Path "$($_.FullName.Replace($_.Extension,'')).parameters.json")   
+                          $deploymentparameterfilename =  "$($_.FullName.Replace($_.Extension,'')).parameters.json"  
                     }
                
                     if($deploymentparameterfilename -ne "")
