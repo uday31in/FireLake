@@ -178,7 +178,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-packer/providers/Microsoft.Compute/galleries/m2siglinux/images/m2-RHEL-74/versions/1.0.0"
+            "id": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-packer/providers/Microsoft.Compute/images/m2-RHEL-74"
           },
           "osDisk": {
             "name": "[concat(variables('tierXNamePrefix'),copyIndex(1))]",
