@@ -103,6 +103,9 @@
                                         },
                                         "maxLength": 61
                                     },
+                                    "osDiskName": {
+                                        "type": "string"
+                                    },
                                     "keyVaultName": {
                                         "type": "string",
                                         "metadata": {
@@ -162,10 +165,28 @@
                                 },
                                 "resources": [
                                     {
+                                        "type": "Microsoft.Compute/snapshots",
+                                        "apiVersion": "2018-04-01",
+                                        "name": "[concat(parameters('vmName'), 'snapshot')]",
+                                        "location": "[resourceGroup().location]",
+                                        "properties": {
+                                            "creationData": {
+                                                "createOption": "Copy",
+                                                "sourceResourceId": "[resourceId('Microsoft.Compute/disks/', parameters('osDiskName'))]"
+                                            }
+                                        },
+                                        "sku": {
+                                            "name": "Standard_LRS"
+                                        }
+                                    },
+                                    {
                                         "type": "Microsoft.Compute/virtualMachines/extensions",
                                         "name": "[concat(parameters('vmName'),'/', 'AzureDiskEncryption')]",
                                         "location": "[parameters('location')]",
                                         "apiVersion": "2018-10-01",
+                                        "dependsOn": [
+                                            "[resourceId('Microsoft.Compute/snapshots/', concat(parameters('vmName'), 'snapshot'))]"
+                                        ],
                                         "properties": {
                                             "publisher": "Microsoft.Azure.Security",
                                             "type": "AzureDiskEncryption",
@@ -195,6 +216,9 @@
                             "parameters": {
                                 "vmName": {
                                     "value": "[field('name')]"
+                                },
+                                "osDiskName": {
+                                    "value": "[field('Microsoft.Compute/virtualMachines/storageProfile.osDisk.name')]"
                                 },
                                 "location": {
                                     "value": "[field('location')]"
