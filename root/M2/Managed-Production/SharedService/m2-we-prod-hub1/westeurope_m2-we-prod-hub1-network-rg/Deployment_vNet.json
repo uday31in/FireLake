@@ -61,7 +61,12 @@
             "false": [
                 {
                     "name": "gatewaylookup",
-                    "properties": {}
+                    "properties": {
+                        "name": {
+                            "id": "none"
+
+                        }
+                    }
                 }
             ]
         },
@@ -201,7 +206,7 @@
             ],
             "copy": {
                 "name": "gatewayCopy",
-                "count": "[length(parameters('vNetDefinition').virtualNetworkGateways)]",
+                "count": "[length(variables('gateways'))]",
                 "mode": "Parallel"
             },
             "properties": {
