@@ -28,7 +28,7 @@
       "inline": [
         "apt-get update",
         "apt-get upgrade -y",
-        "sed 's/Provisioning.UseCloudInit=n/Provisioning.UseCloudInit=y/g' /etc/waagent.conf",  
+        "sed -i 's/Provisioning.UseCloudInit=n/Provisioning.UseCloudInit=y/g' /etc/waagent.conf",  
         "/usr/sbin/waagent -force -deprovision+user && export HISTSIZE=0 && sync"
       ],
       "inline_shebang": "/bin/sh -x",

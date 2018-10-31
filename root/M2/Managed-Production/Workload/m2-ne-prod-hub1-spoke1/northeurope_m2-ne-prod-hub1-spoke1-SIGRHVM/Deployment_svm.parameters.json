@@ -5,8 +5,14 @@
 		"LinuxPassword": {
 			"value": "!!123abc!!123abc"
 		},
+		"gallerysubscriptionId": {
+			"value": "4b7561c1-24a7-468f-8b80-bf79cc29d48b"
+		},
+		"galleryresourceGroupName": {
+			"value": "m2-packer"
+		},
 		"galleryName": {
-			"value": "m2siglinux "
+			"value": "m2siglinux"
 		},
 		"galleryImageDefinitionName": {
 			"value": "m2-RHEL-74"
@@ -15,19 +21,22 @@
 			"value": "1.0.0"
 		},
 		"domainJoinUserName": {
-			"reference": {
-				"keyVault": {
-					"id": "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-kv-rg/providers/Microsoft.KeyVault/vaults/m2-ne-prod-hub1-kv"
-				},
-				"secretName": "domainjoin-username1"
-			}
+			"reference":  {
+				"keyVault":  {
+								 "id":  "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-kv-rg/providers/Microsoft.KeyVault/vaults/m2-ne-prod-hub1-kv"
+							 },
+				"secretName":  "rhdomainusername"
+			}			
+		},
+		"domainFQDN": {
+			"Value": "M2-ADDS.LOCAL"
 		},
 		"domainJoinUserPassword": {
-			"reference": {
-				"keyVault": {
-					"id": "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-kv-rg/providers/Microsoft.KeyVault/vaults/m2-ne-prod-hub1-kv"
-				},
-				"secretName": "domainjoin-password"
+			"reference":  {
+				"keyVault":  {
+								 "id":  "/subscriptions/92b1b98d-6d0f-4252-91cf-e7dfdaf43a38/resourceGroups/m2-ne-prod-hub1-kv-rg/providers/Microsoft.KeyVault/vaults/m2-ne-prod-hub1-kv"
+							 },
+				"secretName":  "rhdomainpassword"
 			}
 		}
 	}

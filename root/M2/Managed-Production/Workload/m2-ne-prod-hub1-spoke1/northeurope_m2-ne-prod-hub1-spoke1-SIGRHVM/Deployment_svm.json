@@ -3,12 +3,26 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
    
+    "gallerysubscriptionId": {
+      "type": "String",
+      "metadata": {
+          "description": "Name of the Shared Image Gallery."
+      }
+    },
+    "galleryresourceGroupName": {
+      "type": "String",
+      "metadata": {
+          "description": "Name of the Shared Image Gallery."
+      }
+    },
+
     "galleryName": {
 			"type": "String",
             "metadata": {
                 "description": "Name of the Shared Image Gallery."
             }
         },
+
 		"galleryImageDefinitionName": {
 			"type": "String",
             "metadata": {
@@ -166,7 +180,7 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(variables('tierXNamePrefix'), copyIndex(1))]",
-      "apiVersion": "2016-04-30-preview",
+      "apiVersion": "2018-04-01", 
       "location": "[resourceGroup().location]",
       "copy": {
         "name": "VMcopy",
@@ -178,7 +192,7 @@
         },
         "storageProfile": {
           "imageReference": {
-            "id": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-packer/providers/Microsoft.Compute/images/m2-RHEL-74"
+            "id": "[resourceId(parameters('gallerysubscriptionId') , parameters('galleryresourceGroupName') ,  'Microsoft.Compute/galleries/images/versions', parameters('galleryName'), parameters('galleryImageDefinitionName'), parameters('galleryImageVersionName'))]"
           },
           "osDisk": {
             "name": "[concat(variables('tierXNamePrefix'),copyIndex(1))]",
