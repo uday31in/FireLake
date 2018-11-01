@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "galleryDefinition": {
+            "value": {
+                "galleries": [
+                    {
+                        "Name": "m2vmimagegalleryrhel",
+                        "Location": "westeurope",
+                        "description" :  "My Private Gallery",
+                        "images": [
+                            {
+                                "galleryImageDefinitionName": "m2-vm-image-gallery-rhel",
+                                "galleryImageDefinitionProperties": {
+                                    "description": "M2 RHEL 7.4 gallery image definition",
+                                    "osType": "Linux",
+                                    "osState": "Generalized",
+                                    "endOfLifeDate": "2020-01-01",
+                                    "identifier": {
+                                        "offer": "RHEL",
+                                        "publisher": "m2",
+                                        "sku": "7.4"
+                                    },
+                                    "recommended": {
+                                        "vCPUs": {
+                                            "min": "1",
+                                            "max": "64"
+                                        },
+                                        "memory": {
+                                            "min": "2048",
+                                            "max": "307720"
+                                        }
+                                    }
+                                   
+                                }
+                            }                           
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+}
