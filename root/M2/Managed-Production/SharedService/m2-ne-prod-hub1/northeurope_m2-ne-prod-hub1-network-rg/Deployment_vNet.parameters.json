@@ -248,6 +248,21 @@
                                                     "ocsp.msocsp.com",
                                                     "www.microsoft.com"
                                                 ]
+                                            },
+                                            {
+                                                "name": "log-analytics-rule",
+                                                "protocols": [                                                    
+                                                    {
+                                                        "port": "443",
+                                                        "protocolType": "https"
+                                                    }
+                                                ],
+                                                "targetUrls": [
+                                                    "*.ods.opinsights.azure.com",
+                                                    "*.oms.opinsights.azure.com",
+                                                    "*.blob.core.windows.net",
+                                                    "*.azure-automation.net"                                                    
+                                                ]
                                             }
                                         ]
                                     }
