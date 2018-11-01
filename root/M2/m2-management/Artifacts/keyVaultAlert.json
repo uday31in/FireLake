@@ -1,0 +1,141 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupId": {
+            "defaultValue": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-oms-europe/providers/Microsoft.Insights/actionGroups/defaultGroup",
+            "type": "string",
+            "metadata": {
+                "description": "Action group resource Id"
+            }
+        },
+        "logAnalyticsResourceId": {
+            "defaultValue": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-oms-europe/providers/Microsoft.OperationalInsights/workspaces/m2-oms-westeurope",
+            "type": "string",
+            "metadata": {
+                "description": "The Log Analytics Workspace resourceId to be referenced for the Alert."
+            }
+        },
+        "logAnalyticsWorkspaceLocation": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "The Log Analytics Workspace location."
+            }
+        }
+    },
+    "variables": {
+        "hiddenLinkTag": "[json( concat( '{\"hidden-link:', parameters('logAnalyticsResourceId'), '\": \"Resource\"}' ) )]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "keyvault",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'logAnalyticsWorkspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "properties": {
+                "description": "Notifies when someone successfully has retrieved secrets from KeyVault.",
+                "enabled": "true",
+                "source": {
+                    "query": "AzureDiagnostics | where OperationName == 'SecretGet' | where ResultType == 'Success' | where trustedService_s != 'AzureResourceManager/Deployment'",
+                    "dataSourceId": "[parameters('logAnalyticsResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 5
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "0",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "KeyVaul Secret Alert!",
+                        "customWebhookPayload": "{}"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "armDeployment",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'logAnalyticsWorkspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "properties": {
+                "description": "Notifies when there is a failed ARM template deployment.",
+                "enabled": "true",
+                "source": {
+                    "query": "AzureActivity | where OperationName == 'Create Deployment' | where Level == 'Error' | project Caller, SubscriptionId, ResourceGroup, ResourceId, Level, ActivityStatus, TimeGenerated, HTTPRequest",
+                    "dataSourceId": "[parameters('logAnalyticsResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 5
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "0",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "Failed ARM template deployment.",
+                        "customWebhookPayload": "{}"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": 0
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Insights/scheduledQueryRules",
+            "name": "armValidation",
+            "apiVersion": "2018-04-16",
+            "location": "[parameters( 'logAnalyticsWorkspaceLocation' )]",
+            "tags": "[variables('hiddenLinkTag')]",
+            "properties": {
+                "description": "Notifies when there is a failed ARM template deployment.",
+                "enabled": "true",
+                "source": {
+                    "query": "AzureActivity | where ActivityStatus == 'Failed' | where OperationName == 'Validate Deployment'",
+                    "dataSourceId": "[parameters('logAnalyticsResourceId')]",
+                    "queryType": "ResultCount"
+                },
+                "schedule": {
+                    "frequencyInMinutes": 5,
+                    "timeWindowInMinutes": 5
+                },
+                "action": {
+                    "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                    "severity": "0",
+                    "throttlingInMin": 0,
+                    "aznsAction": {
+                        "actionGroup": [
+                            "[parameters('actionGroupId')]"
+                        ],
+                        "emailSubject": "Failed ARM template validation.",
+                        "customWebhookPayload": "{}"
+                    },
+                    "trigger": {
+                        "thresholdOperator": "GreaterThan",
+                        "threshold": 0
+                    }
+                }
+            }
+        }                
+    ],
+    "outputs": {}
+}
