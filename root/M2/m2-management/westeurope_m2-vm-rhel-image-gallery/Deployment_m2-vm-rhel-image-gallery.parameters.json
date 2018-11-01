@@ -6,9 +6,10 @@
             "value": {
                 "galleries": [
                     {
-                        "Name": "m2vmimagegalleryrhel",
+                        "DoIExist": "No",
+                        "Name": "udayrocks100",
                         "Location": "westeurope",
-                        "description" :  "My Private Gallery",
+                        "description" : "My Private Gallery",
                         "images": [
                             {
                                 "galleryImageDefinitionName": "m2-vm-image-gallery-rhel",
