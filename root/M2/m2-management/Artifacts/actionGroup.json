@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "actionGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "Unique name (within the Resource Group) for the Action group."
+            }
+        },
+        "mgmtOpsTeam": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Insights/actionGroups",
+            "apiVersion": "2018-03-01",
+            "name": "[parameters('actionGroupName')]",
+            "location": "Global",
+            "properties": {
+                "groupShortName": "[take(parameters('actionGroupName'), 5)]",
+                "enabled": true,
+                "smsReceivers": [],
+                "emailReceivers": [
+                    {
+                        "name": "DefaultAlert",
+                        "emailAddress": "[parameters('mgmtOpsTeam')]"
+                    }
+                ],
+                "webhookReceivers": []
+            }
+        }
+    ],
+    "outputs": {
+        "actionGroupId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Insights/actionGroups/', parameters('actionGroupName'))]"
+        }
+    }
+}

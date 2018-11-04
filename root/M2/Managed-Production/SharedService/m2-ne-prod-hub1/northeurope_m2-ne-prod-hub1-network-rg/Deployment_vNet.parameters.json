@@ -66,7 +66,9 @@
                             {
                                 "name": "internet",
                                 "addressPrefix": "0.0.0.0/0",
-                                "nextHopType": "Internet"
+                                "nextHopType": "VirtualAppliance",
+                                "nextHopIpAddress" : "10.1.1.4"
+
                             }
                         ]
                     },
@@ -245,6 +247,21 @@
                                                     "crl.microsoft.com",
                                                     "ocsp.msocsp.com",
                                                     "www.microsoft.com"
+                                                ]
+                                            },
+                                            {
+                                                "name": "log-analytics-rule",
+                                                "protocols": [                                                    
+                                                    {
+                                                        "port": "443",
+                                                        "protocolType": "https"
+                                                    }
+                                                ],
+                                                "targetUrls": [
+                                                    "*.ods.opinsights.azure.com",
+                                                    "*.oms.opinsights.azure.com",
+                                                    "*.blob.core.windows.net",
+                                                    "*.azure-automation.net"                                                    
                                                 ]
                                             }
                                         ]

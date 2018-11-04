@@ -44,6 +44,13 @@
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups' ,'m2-ne-prod-hub1-spoke1-app3-nsg')]"
                             }
                         }
+                    },
+					{
+                        "name": "m2-ne-prod-hub1-spoke1-ase",
+                        "properties": {
+                            "addressPrefix": "10.1.19.0/24"
+                           
+                        }
                     }
                 ],
                 "routeTables": [

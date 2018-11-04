@@ -1,0 +1,83 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "galleryDefinition": {
+            "type": "object",
+            "metadata": {
+                "description": "Azure Gallery"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "condition": "[greater(length(parameters('galleryDefinition').galleries),0)]",
+            "name": "[concat('gallerycopy-',copyIndex())]",
+            "copy": {
+                "name": "galleryiterator",
+                "count": "[length(parameters('galleryDefinition').galleries)]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "condition": "[not(equals(parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].DoIExist, 'Yes'))]",
+                            "type": "Microsoft.Compute/galleries",
+                            "name": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].Name]",
+                            "apiVersion": "2018-06-01",
+                            "location": "[parameters('galleryDefinition').galleries[copyIndex()].Location]",
+                            "properties": {
+                                "description": "[parameters('galleryDefinition').galleries[copyIndex()].description]"
+
+                            }
+                        },
+                        {
+                            "type": "Microsoft.Resources/deployments",
+                            "apiVersion": "2018-05-01",                            
+                            "name": "[concat('imagecopier',copyIndex())]",
+                            "copy": {
+                                "name": "copy",
+                                "count": "[length(parameters('galleryDefinition').galleries[0].images)]"
+                            },
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Compute/galleries/', parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].Name)]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "variables": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Compute/galleries/images",
+                                            "name": "[concat(parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].Name, '/', parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionName)]",
+                                            "apiVersion": "2018-06-01",
+                                            "location": "[resourceGroup().location]",
+                                            "properties": {
+                                                "description": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.description]",
+                                                "osType": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.osType]",
+                                                "osState": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.osState]",
+                                                "endOfLifeDate": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.endOfLifeDate]",
+                                                "identifier": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.identifier]",
+                                                "recommended": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.recommended]"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
