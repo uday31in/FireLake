@@ -11,14 +11,25 @@
     },
     "resources": [
         {
+            "type": "Microsoft.Compute/galleries",
+            "name": "[parameters('galleryDefinition').galleries.Name]",
+            "apiVersion": "2018-06-01",
+            "location": "[parameters('galleryDefinition').galleries.Location]",
+            "properties": {
+                "description": "[parameters('galleryDefinition').galleries.description]"
+            }
+        },      
+        {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "condition": "[greater(length(parameters('galleryDefinition').galleries),0)]",
-            "name": "[concat('gallerycopy-',copyIndex())]",
+            "name": "[concat('imagecopy',copyIndex())]",
             "copy": {
-                "name": "galleryiterator",
-                "count": "[length(parameters('galleryDefinition').galleries)]"
+                "name": "imagecopy",
+                "count": "[length(parameters('galleryDefinition').galleries.images)]"
             },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/galleries/', parameters('galleryDefinition').galleries.Name)]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -28,27 +39,20 @@
                     "variables": {},
                     "resources": [
                         {
-                            "condition": "[not(equals(parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].DoIExist, 'Yes'))]",
-                            "type": "Microsoft.Compute/galleries",
-                            "name": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].Name]",
+                            "type": "Microsoft.Compute/galleries/images",
+                            "name": "[concat(parameters('galleryDefinition').galleries.Name, '/', parameters('galleryDefinition').galleries.images[copyIndex()].galleryImageDefinitionName)]",
                             "apiVersion": "2018-06-01",
-                            "location": "[parameters('galleryDefinition').galleries[copyIndex()].Location]",
-                            "properties": {
-                                "description": "[parameters('galleryDefinition').galleries[copyIndex()].description]"
-
-                            }
+                            "location": "[resourceGroup().location]",                            
+                            "properties": "[parameters('galleryDefinition').galleries.images[copyIndex()].galleryImageDefinitionProperties]"
                         },
                         {
                             "type": "Microsoft.Resources/deployments",
-                            "apiVersion": "2018-05-01",                            
-                            "name": "[concat('imagecopier',copyIndex())]",
+                            "apiVersion": "2018-05-01",
+                            "name": "[concat('versioncopy',copyIndex())]",
                             "copy": {
-                                "name": "copy",
-                                "count": "[length(parameters('galleryDefinition').galleries[0].images)]"
-                            },
-                            "dependsOn": [
-                                "[resourceId('Microsoft.Compute/galleries/', parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].Name)]"
-                            ],
+                                "name": "versioncopy",
+                                "count": "[length(parameters('galleryDefinition').galleries.images[copyIndex('imagecopy')].versions)]"
+                            },                          
                             "properties": {
                                 "mode": "Incremental",
                                 "template": {
@@ -58,26 +62,28 @@
                                     "variables": {},
                                     "resources": [
                                         {
-                                            "type": "Microsoft.Compute/galleries/images",
-                                            "name": "[concat(parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].Name, '/', parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionName)]",
+                                            "type": "Microsoft.Compute/galleries/images/versions",
+                                            "name": "[concat(parameters('galleryDefinition').galleries.Name, '/', parameters('galleryDefinition').galleries.images[copyIndex('imagecopy')].galleryImageDefinitionName, '/', parameters('galleryDefinition').galleries.images[copyIndex('imagecopy')].versions[copyIndex()].name )]",
                                             "apiVersion": "2018-06-01",
-                                            "location": "[resourceGroup().location]",
-                                            "properties": {
-                                                "description": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.description]",
-                                                "osType": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.osType]",
-                                                "osState": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.osState]",
-                                                "endOfLifeDate": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.endOfLifeDate]",
-                                                "identifier": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.identifier]",
-                                                "recommended": "[parameters('galleryDefinition').galleries[copyIndex('galleryiterator')].images[copyindex()].galleryImageDefinitionProperties.recommended]"
-                                            }
+                                            "location": "[resourceGroup().location]",                            
+                                            "properties": "[parameters('galleryDefinition').galleries.images[copyIndex('imagecopy')].versions[copyIndex()].properties]"
                                         }
                                     ]
                                 }
                             }
-                        }
+                        }   
+
+
+
                     ]
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "gallery": {
+            "type": "object",
+            "value": "[parameters('galleryDefinition').galleries.images[0]]"
+        }
+    }
 }

@@ -4,41 +4,64 @@
     "parameters": {
         "galleryDefinition": {
             "value": {
-                "galleries": [
-                    {
-                        "DoIExist": "No",
-                        "Name": "udayrocks100",
-                        "Location": "westeurope",
-                        "description" : "My Private Gallery",
-                        "images": [
-                            {
-                                "galleryImageDefinitionName": "m2-vm-image-gallery-rhel",
-                                "galleryImageDefinitionProperties": {
-                                    "description": "M2 RHEL 7.4 gallery image definition",
-                                    "osType": "Linux",
-                                    "osState": "Generalized",
-                                    "endOfLifeDate": "2020-01-01",
-                                    "identifier": {
-                                        "offer": "RHEL",
-                                        "publisher": "m2",
-                                        "sku": "7.4"
+                "galleries": {
+                    "Name": "udayrocks100",
+                    "Location": "westeurope",
+                    "description": "My Private Gallery",
+                    "images": [
+                        {
+                            "galleryImageDefinitionName": "m2-vm-image-gallery-rhel",
+                            "galleryImageDefinitionProperties": {
+                                "description": "M2 RHEL 7.4 gallery image definition",
+                                "osType": "Linux",
+                                "osState": "Generalized",
+                                "endOfLifeDate": "2020-01-01",
+                                "identifier": {
+                                    "offer": "RHEL",
+                                    "publisher": "m2",
+                                    "sku": "7.4"
+                                },
+                                "recommended": {
+                                    "vCPUs": {
+                                        "min": "1",
+                                        "max": "64"
                                     },
-                                    "recommended": {
-                                        "vCPUs": {
-                                            "min": "1",
-                                            "max": "64"
-                                        },
-                                        "memory": {
-                                            "min": "2048",
-                                            "max": "307720"
+                                    "memory": {
+                                        "min": "2048",
+                                        "max": "307720"
+                                    }
+                                }
+                            },
+                            "versions": [
+                                {
+                                    "name": "1.0.0",
+                                    "properties": {
+                                        "publishingProfile": {
+                                            "endOfLifeDate": null,
+                                            "excludeFromLatest": false,                                           
+                                            "replicaCount": 1,
+                                            "source": {
+                                                "managedImage": {
+                                                    "id": "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b/resourceGroups/m2-packer/providers/Microsoft.Compute/images/m2-RHEL-74"                                                   
+                                                }
+                                            },
+                                            "targetRegions": [
+                                                {
+                                                    "name": "West Europe",
+                                                    "regionalReplicaCount": 1
+                                                },
+                                                {
+                                                    "name": "North Europe",
+                                                    "regionalReplicaCount": 1
+                                                }
+                                            ]
                                         }
                                     }
-                                   
                                 }
-                            }                           
-                        ]
-                    }
-                ]
+                            ]
+                        }
+                    ]
+                }
             }
         }
     }
