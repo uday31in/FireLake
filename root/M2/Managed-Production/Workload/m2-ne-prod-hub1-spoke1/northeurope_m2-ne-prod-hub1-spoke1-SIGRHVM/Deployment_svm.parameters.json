@@ -9,13 +9,13 @@
 			"value": "4b7561c1-24a7-468f-8b80-bf79cc29d48b"
 		},
 		"galleryresourceGroupName": {
-			"value": "m2-packer"
+			"value": "m2-vm-rhel-image-gallery"
 		},
 		"galleryName": {
-			"value": "m2siglinux"
+			"value": "udayrocks100"
 		},
 		"galleryImageDefinitionName": {
-			"value": "m2-RHEL-74"
+			"value": "m2-vm-image-gallery-rhel"
 		},
 		"galleryImageVersionName": {
 			"value": "1.0.0"
