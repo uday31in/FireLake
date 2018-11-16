@@ -1,0 +1,126 @@
+{
+    "Name": "DINE-ASC",
+    "ResourceId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/DINE-ASC",
+    "ResourceName": "M2",
+    "ResourceType": "Microsoft.Management/managementgroups",
+    "ExtensionResourceName": "DINE-ASC",
+    "ExtensionResourceType": "Microsoft.Authorization/policyDefinitions",    
+    "properties": {
+        "policyType": "custom",
+        "parameters": {
+            "emailSecurityContact": {
+                "type": "string",
+                "metadata": {
+                    "description": "email address of the contact, in the form of john@doe.com"
+                }
+            },
+            "phoneSecurityContact": {
+                "type": "string",
+                "metadata": {
+                    "description": "phone number of the Security Contact"
+                }
+            }
+        },
+        "policyRule": {
+            "if": {
+                "allOf": [
+                    {
+                        "field": "type",
+                        "equals": "Microsoft.Resources/subscriptions"
+                    }
+                ]
+            },
+            "then": {
+                "effect": "deployIfNotExists",
+                "details": {
+                    "type": "Microsoft.Security/policies",
+                    "deploymentScope": "Subscription",
+                    "existenceScope": "Subscription",
+                    "roleDefinitionIds": [
+                        "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+                    ],
+                    "existenceCondition": {
+                        "field": "name",
+                        "like": "*"
+                    },
+                    "deployment": {
+                        "location": "westeurope",
+                        "properties": {
+                            "mode": "incremental",
+                            "parameters": {
+                                "emailSecurityContact":{
+                                    "value": "[parameters('emailSecurityContact')]"
+                                },
+                                "phoneSecurityContact":{
+                                    "value": "[parameters('phoneSecurityContact')]"
+                                }
+                            },
+                            "template": {
+                                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                "contentVersion": "1.0.0.0",
+                                "parameters": {
+                                    "emailSecurityContact": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "email address of the contact, in the form of john@doe.com"
+                                        }
+                                    },
+                                    "phoneSecurityContact": {
+                                        "type": "string",
+                                        "metadata": {
+                                            "description": "phone number of the Security Contact"
+                                        }
+                                    }
+                                },
+                                "variables": {},
+                                "resources": [
+                                    {
+                                        "type": "Microsoft.Security/securityContacts",
+                                        "name": "default1",
+                                        "apiVersion": "2017-08-01-preview",
+                                        "properties": {
+                                            "email": "[parameters('emailSecurityContact')]",
+                                            "phone": "[parameters('phoneSecurityContact')]",
+                                            "alertNotifications": "On",
+                                            "alertsToAdmins": "On"
+                                        }
+                                    },
+                                    {
+                                        "type": "Microsoft.Security/policies",
+                                        "apiVersion": "2015-06-01-preview",
+                                        "name": "default",
+                                        "properties": {
+                                            "policyLevel": "Subscription",
+                                            "name": "default",
+                                            "unique": "Off",
+                                            "logCollection": "Off",
+                                            "recommendations": {
+                                                "patch": "On",
+                                                "baseline": "On",
+                                                "antimalware": "On",
+                                                "diskEncryption": "On",
+                                                "acls": "On",
+                                                "nsgs": "On",
+                                                "waf": "On",
+                                                "sqlAuditing": "On",
+                                                "sqlTde": "On",
+                                                "ngfw": "On",
+                                                "vulnerabilityAssessment": "On",
+                                                "storageEncryption": "On",
+                                                "jitNetworkAccess": "On"
+                                            },
+                                            "pricingConfiguration": {
+                                                "selectedPricingTier": "Standard"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "outputs": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
