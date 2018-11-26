@@ -342,20 +342,38 @@ function Ensure-AzureRMManagementAndSubscriptionHierarchy ($AzureIsAuthoritative
 
 function getScope($name)
 {
-    if(Get-ChildItem -Path $name -Name managementgroup.json)
+
+    $name = get-item -Path $name
+    if ((get-item -Path $name) -is [System.IO.DirectoryInfo])
     {
-        $managementgroup = Get-Content -Path $name\managementgroup.json | ConvertFrom-Json
-        return $managementgroup.Id    
-    }
-    elseif(Get-ChildItem -Path $name -Name subscription.json)
-    {
-        $subscription = Get-Content -Path $name\subscription.json | ConvertFrom-Json
-        return "/subscriptions/$($subscription.Id)"
+    
+        if(Test-Path -Path (join-path -path $name -ChildPath managementgroup.json))
+        {
+            $managementgroup = Get-Content -Path $name\managementgroup.json | ConvertFrom-Json
+            return $managementgroup.Id    
+        }
+        elseif(Test-Path -Path (join-path $name subscription.json))
+        {
+            $subscription = Get-Content -Path $name\subscription.json | ConvertFrom-Json
+            return "/subscriptions/$($subscription.Id)"
+        }
+        elseif (Test-Path -Path (join-path $name resourcegroup.json))
+        {
+            $resourcegroup = Get-Content -Path $name\resourcegroup.json | ConvertFrom-Json
+            return "$(getScope -name (Get-Item -Path $name).Parent.FullName)/resourcegroups/$($(Get-Item -Path $name).BaseName)"
+        }
+        else
+        {
+           (getScope -name (Get-Item -Path $name).Parent.FullName)
+            #return $null
+        }
     }
     else
     {
-        return "$(getScope -name (Get-Item -Path $name).Parent.FullName)/resourcegroups/$($(Get-Item -Path $name).BaseName)"
+        #name is file to path
+        getScope ($name.Directory)
     }
+
 }
 
 
@@ -828,9 +846,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
                 $policyassignmentname = $localassignment.Properties.displayName
                 $policydefinition = Get-AzureRmPolicyDefinition -Id $localassignment.Properties.policyDefinitionId 
                 $policyassignmentparameters = "$($localassignment.Properties.parameters | ConvertTo-Json -Depth 100 |  % { [System.Text.RegularExpressions.Regex]::Unescape($_) })"
-
-
-
+                $policyNotScopes = $localassignment.Properties.notScopes
 
                 $match = ($currentPolicyAssignmentsInAzure |? { $_.name -eq $policyassignmentname }) 
                 if(-not $match)
@@ -846,7 +862,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
                                             -Name $policyassignmentname `
                                             -DisplayName $policyassignmentname `
                                             -PolicySetDefinition $policydefinition `
-                                            -PolicyParameter $policyassignmentparameters    
+                                            -PolicyParameter $policyassignmentparameters -NotScope $policyNotScopes    
                     }
                     else
                     {
@@ -858,7 +874,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
                                             -Name $policyassignmentname `
                                             -DisplayName $policyassignmentname `
                                             -PolicyDefinition $policydefinition `
-                                            -PolicyParameter $policyassignmentparameters    
+                                            -PolicyParameter $policyassignmentparameters -NotScope $policyNotScopes   
 
                     }
                 }
@@ -866,7 +882,7 @@ function Ensure-AzureRMPolicyAssignment ($AzureIsAuthoritative = $true, $path = 
                 {
                     
                     Write-Host "Policy Assignment already exists for $($_.FullName)"
-                    
+                                       
                 }
 
             }          

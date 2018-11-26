@@ -13,7 +13,10 @@ $TenantRootname = 'root',
 $TenantManagementGroupRoot = "M2",
 $vstsAAObjectID = (Get-AzureRmADServicePrincipal -SearchString 'iaac4dcm-cd4dcm-M2').Id,
 $mgmtSubscriptionID= "4b7561c1-24a7-468f-8b80-bf79cc29d48b",
-[string]$managementgrouptofind = ""
+[string]$managementgrouptofind = "",
+
+[string]$revstart = "HEAD",
+[string]$revend = "HEAD~1"
 
 
 )
@@ -45,6 +48,38 @@ Write-Host "pathtoManangementGroup : $pathtoManangementGroup"
 Write-Host "mgmtSubscriptionPath: $mgmtSubscriptionPath"
 
 Import-Module "$path\IAC4DCA.psm1" -Force
+
+
+
+
+$diffchangeset = (git diff --name-only $revstart $revend) -split $([Environment]::NewLine)
+
+$diffchangeset |% {
+
+    $file = Get-ChildItem -Path $path\$_
+    if($file -ne $null)
+    {
+       
+        if($file.Name -like 'PolicyDefinition_*')
+        {
+             Write-Host "Processing File: $file"
+             Write-Host "IAC4DCAPolicyDefinitions : $AzureIsAuthoritative"
+             Ensure-AzureRMPolicyDefinition -AzureIsAuthoritative:$AzureIsAuthoritative -path $path\$TenantRootname\$TenantManagementGroupRoot
+             Ensure-AzureRMPolicySetDefinition -AzureIsAuthoritative:$AzureIsAuthoritative -path $path\$TenantRootname\$TenantManagementGroupRoot
+        }
+
+        if($file.Name -like 'RoleDefinition_*')
+        {
+             Write-Host "Processing File: $file"
+             Write-Host "IAC4DCAPolicyDefinitions : $AzureIsAuthoritative"
+             Ensure-AzureRMPolicyDefinition -AzureIsAuthoritative:$AzureIsAuthoritative -path $path\$TenantRootname\$TenantManagementGroupRoot
+             Ensure-AzureRMPolicySetDefinition -AzureIsAuthoritative:$AzureIsAuthoritative -path $path\$TenantRootname\$TenantManagementGroupRoot
+        }
+    }
+
+}
+
+
 
 
 if($MgmtandSubscriptions)
