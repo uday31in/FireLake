@@ -5,7 +5,7 @@ $Enroll = Get-AzureRmEnrollmentAccount
 
 $SPNName = "foobar"
 
-$mgmtGroupRootScope = "/providers/Microsoft.Management/managementGroups/ARMMSP"
+$mgmtGroupRootScope = "/providers/Microsoft.Management/managementGroups/M2"
 
 $SecureStringPassword = ConvertTo-SecureString -String "password" -AsPlainText -Force
 
