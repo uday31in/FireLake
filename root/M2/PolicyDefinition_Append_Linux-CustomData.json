@@ -175,7 +175,7 @@
                     },
                     {
                         "field": "Microsoft.Compute/virtualMachines/osProfile.customData",
-                        "exists": "false"
+                        "notEquals": "[parameters('customData')]"
                     }
                 ]
             },
