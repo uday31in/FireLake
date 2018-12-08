@@ -224,14 +224,6 @@
                                 "equals": "Microsoft.EnterpriseCloud.Monitoring"
                             },
                             {
-                                "field": "Microsoft.Compute/virtualMachines/extensions/type",
-                                "equals": "DependencyAgentWindows"
-                            },
-                            {
-                                "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
-                                "equals": "Microsoft.Azure.Monitoring.DependencyAgent"
-                            },
-                            {
                                 "field": "Microsoft.Compute/virtualMachines/extensions/provisioningState",
                                 "equals": "Succeeded"
                             }
