@@ -1,10 +1,4 @@
 {
-    "Name": "DINE-ASC",
-    "ResourceId": "/providers/Microsoft.Management/managementgroups/M2/providers/Microsoft.Authorization/policyDefinitions/DINE-ASC",
-    "ResourceName": "M2",
-    "ResourceType": "Microsoft.Management/managementgroups",
-    "ExtensionResourceName": "DINE-ASC",
-    "ExtensionResourceType": "Microsoft.Authorization/policyDefinitions",    
     "properties": {
         "policyType": "custom",
         "parameters": {
@@ -40,18 +34,26 @@
                         "/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
                     ],
                     "existenceCondition": {
-                        "field": "name",
-                        "like": "*"
+                        "allOf": [
+                            {
+                                "field": "name",
+                                "like": "default"
+                            },
+                            {
+                                "field": "Microsoft.Security/policies/pricingConfiguration.selectedPricingTier",
+                                "equals": "Standard"
+                            }
+                        ]
                     },
                     "deployment": {
                         "location": "westeurope",
                         "properties": {
                             "mode": "incremental",
                             "parameters": {
-                                "emailSecurityContact":{
+                                "emailSecurityContact": {
                                     "value": "[parameters('emailSecurityContact')]"
                                 },
-                                "phoneSecurityContact":{
+                                "phoneSecurityContact": {
                                     "value": "[parameters('phoneSecurityContact')]"
                                 }
                             },
