@@ -7,7 +7,7 @@
                 "type": "string",
                 "metadata": {
                     "displayName": "Log Analyitcs workspace in Europe",
-                    "description": "Select the Log Analytics workspace from dropdown list",
+                    "description": "Select the Log Analytics workspace from dropdown list.",
                     "strongType": "omsWorkspace"
                 }
             },
