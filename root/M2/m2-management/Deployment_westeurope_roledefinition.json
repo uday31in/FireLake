@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "roledefinition": {
+            "type": "object"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2017-09-01",
+            "name": "[guid(parameters('roledefinition').properties.roleName)]",
+            "type": "Microsoft.Authorization/roleDefinitions",
+            "properties": "[parameters('roledefinition').properties]"
+        }
+    ],
+    "outputs": {
+        "subscription": {
+            "type": "object",
+            "value": "[subscription()]"
+          }
+
+
+    }
+}

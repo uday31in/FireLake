@@ -1,0 +1,25 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "roledefinition": {
+      "value": {        
+        "properties": {
+          "roleName": "testroleDefinition",
+          "description": "test roleDedinition description",          
+          "permissions": [
+            {
+              "Actions": [
+                "*/read"
+              ],
+              "NotActions": []
+            }
+          ],
+          "assignableScopes": [
+            "/subscriptions/4b7561c1-24a7-468f-8b80-bf79cc29d48b"
+          ]
+        }
+      }
+    }
+  }
+}
