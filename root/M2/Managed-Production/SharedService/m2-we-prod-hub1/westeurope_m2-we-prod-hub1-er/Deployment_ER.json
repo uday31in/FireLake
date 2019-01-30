@@ -1,0 +1,25 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "erDefinition": {
+            "type": "object",
+            "metadata": {
+                "description": "Definition of the ExpressRoute circuit"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2018-08-01",
+            "type": "Microsoft.Network/expressRouteCircuits",
+            "name": "[parameters('erDefinition').name]",
+            "location": "[resourceGroup().location]",
+            "tags": "[parameters('erDefinition').tags]",
+            "sku": "[parameters('erDefinition').sku]",
+            "properties": "[parameters('erDefinition').properties]"
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,35 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "erDefinition": {
+            "value": {
+                "name": "er01",
+                "tags": {},
+                "sku": {
+                    "name": "Standard_MeteredData",
+                    "tier": "Standard",
+                    "family": "MeteredData"
+                },
+                "properties": {
+                    "allowClassicOperations": false,
+                    "allowGlobalReach": false,
+                    "peerings": [],
+                    "serviceProviderProperties": {
+                        "serviceProviderName": "Equinix",
+                        "peeringLocation": "London",
+                        "bandwidthInMbps": 50
+                    },
+                    "authorizations": [
+                        {
+                            "name": "auth1"
+                        },
+                        {
+                            "name": "auth2"
+                        }                        
+                    ]
+                }
+            }
+        }
+    }
+}
