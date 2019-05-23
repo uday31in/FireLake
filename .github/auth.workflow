@@ -1,3 +1,4 @@
+
 workflow "Az Login" {
   on = "push"
   resolves = ["GitHub Action for Azure"]
