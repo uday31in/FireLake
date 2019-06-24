@@ -9,8 +9,8 @@ action "auth" {
 }
 
 action "Filters for GitHub Actions" {
-  uses = "actions/bin/filter@3c0b4f0e63ea54ea5df2914b4fabf383368cd0da"
+  uses = "docker://alpine/git:latest"
   needs = ["auth"]
   secrets = ["GITHUB_TOKEN"]
-  runs = "git diff --name-only --diff-filter=AM"
+  args = "diff --name-only --diff-filter=AM"
 }
