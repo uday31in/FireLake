@@ -7,5 +7,5 @@ action "docker://alpine/git:latest" {
   uses = "docker://alpine/git:latest"
   secrets = ["GITHUB_TOKEN"]
   runs = "git"
-  args = "diff --name-only --diff-filter=AM master"
+  args = "diff --name-only --diff-filter=AM HEAD..master"
 }
