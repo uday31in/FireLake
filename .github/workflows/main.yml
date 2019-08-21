@@ -57,9 +57,7 @@ jobs:
     - name: get ps modules
       shell: pwsh 
       run: "Get-InstalledModule -Name Az -AllVersions | select Name,Version"
-    - name: secret
-      shell: pwsh
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
-      run: echo "$GITHUB_TOKEN"
+    - name: current directory
+      shell: pwsh      
+      run: "pwd;ls -alh"
     
