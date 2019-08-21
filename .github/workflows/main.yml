@@ -25,7 +25,7 @@ jobs:
     steps:    
     - name: install az
       shell: pwsh 
-      run: Install-Module -Name Az
+      run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
     - name: get ps modules
       shell: pwsh 
       run: get-module -listavailable
