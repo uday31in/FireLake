@@ -32,7 +32,6 @@ jobs:
     - name: secret
       shell: pwsh
        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MY_VAR1: a_variable
-      run: "echo $env:GITHUB_TOKEN"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
+      run: echo "$GITHUB_TOKEN"
     
