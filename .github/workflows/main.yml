@@ -28,5 +28,11 @@ jobs:
       run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
     - name: get ps modules
       shell: pwsh 
-      run: get-module -listavailable
+      run: "Get-InstalledModule -Name Az -AllVersions | select Name,Version"
+    - name: secret
+      shell: pwsh
+       env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MY_VAR1: a_variable
+      run: "echo $env:GITHUB_TOKEN"
     
