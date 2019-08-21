@@ -31,7 +31,7 @@ jobs:
       run: "Get-InstalledModule -Name Az -AllVersions | select Name,Version"
     - name: secret
       shell: pwsh
-       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
       run: echo "$GITHUB_TOKEN"
     
