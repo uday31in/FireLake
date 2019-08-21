@@ -23,6 +23,9 @@ jobs:
   pwsh:
     runs-on: ubuntu-latest
     steps:    
+    - name: install az
+      shell: pwsh 
+      run: Install-Module -Name Az
     - name: get ps modules
       shell: pwsh 
       run: get-module -listavailable
