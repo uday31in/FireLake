@@ -17,5 +17,5 @@ jobs:
       shell: powershell
       run: "Get-ChildItem env:"
     - name: get ps modules
-      shell: powershell
+      shell: pwsh 
       run: get-module -listavailable
