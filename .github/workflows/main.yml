@@ -13,3 +13,6 @@ jobs:
     - name: powershell
       shell: powershell 
       run: $PSVersionTable
+    - name: print enviornment variable
+      shell: powershell
+      run: Get-ChildItem env:
