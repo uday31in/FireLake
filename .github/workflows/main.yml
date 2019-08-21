@@ -16,3 +16,6 @@ jobs:
     - name: print enviornment variable
       shell: powershell
       run: "Get-ChildItem env:"
+    - name: get ps modules
+      shell: powershell
+      run: get-module -listavailable
