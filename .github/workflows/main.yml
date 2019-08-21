@@ -66,4 +66,4 @@ jobs:
     steps:   
     - name: git status
       shell: pwsh 
-      run: git status
+      run: "cd $GITHUB_WORKSPACE ; ls -alh ; git status"
