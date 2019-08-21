@@ -60,4 +60,10 @@ jobs:
     - name: current directory
       shell: pwsh      
       run: "pwd;ls -alh"
-    
+  
+  git:
+    runs-on: ubuntu-latest
+    steps:   
+    - name: git status
+      shell: pwsh 
+      run: git status
