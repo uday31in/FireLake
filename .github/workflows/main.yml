@@ -22,7 +22,12 @@ jobs:
       
   pwsh:
     runs-on: ubuntu-latest
-    steps:    
+    steps:
+    - name: Explain why this job ran
+      uses: monacorp/action-name@master
+      with:
+        entrypoint: /bin/echo
+        args: this was run due to a $
     - name: install az
       shell: pwsh 
       run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
