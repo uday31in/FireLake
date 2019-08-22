@@ -67,9 +67,12 @@ jobs:
     - name: printenv
       run: printenv
     - name: pwd
-      run: pwd
+      run: pwd      
+    - name: print all enviornment variables in psh shell
+      run: "Get-ChildItem env:"
+      shell: pwsh
     - name: change directory      
-      run: "cd $env:GITHUB_WORKSPACE; pwd; ls -alh"
+      run: "cd $GITHUB_WORKSPACE; pwd; ls -alh"
     - name: git status
       shell: pwsh 
       run: "pwd;printenv; echo GITHUB_WORKSPACE:$env:GITHUB_WORKSPACE; cd $($env:GITHUB_WORKSPACE) ; ls -alh"
