@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lin-pwsh]
     steps:   
-    - name: printenv
+    - name: printenv; ls -alh
       run: printenv
     - name: pwd
       run: pwd      
