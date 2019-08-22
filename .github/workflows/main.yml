@@ -64,6 +64,9 @@ jobs:
   git:
     runs-on: ubuntu-latest
     steps:   
+    - name: change directory
+      shell: pwsh 
+      run: "pwd; cd ${GITHUB_WORKSPACE}; pwd; ls -alh "
     - name: git status
       shell: pwsh 
       run: "printenv; echo GITHUB_WORKSPACE:$GITHUB_WORKSPACE; cd $($GITHUB_WORKSPACE) ; ls -alh "
