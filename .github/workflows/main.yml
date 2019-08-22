@@ -53,7 +53,7 @@ jobs:
     steps:   
     - name: install az
       shell: pwsh 
-      run: "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
+      run: "#Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
     - name: get ps modules
       shell: pwsh 
       run: "Get-InstalledModule -Name Az -AllVersions | select Name,Version"
@@ -69,7 +69,7 @@ jobs:
     - name: pwd
       run: pwd
     - name: change directory      
-      run: "cd ${GITHUB_WORKSPACE}; pwd; ls -alh"
+      run: "cd $env:GITHUB_WORKSPACE; pwd; ls -alh"
     - name: git status
       shell: pwsh 
-      run: "printenv; echo GITHUB_WORKSPACE:$GITHUB_WORKSPACE; cd $($GITHUB_WORKSPACE) ; ls -alh"
+      run: "pwd;printenv; echo GITHUB_WORKSPACE:$env:GITHUB_WORKSPACE; cd $($env:GITHUB_WORKSPACE) ; ls -alh"
