@@ -64,7 +64,7 @@ jobs:
     needs: [lin-pwsh]
     steps:   
     - name: printenv
-      run: printenv ; ls -R /github ; ls -R $HOME
+      run: printenv ; ls -R $HOME
     - name: pwd
       run: pwd      
     - name: print all enviornment variables in psh shell
