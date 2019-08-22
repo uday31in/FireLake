@@ -54,7 +54,7 @@ jobs:
       run: "#Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
     - name: get ps modules
       shell: pwsh 
-      run: "Get-InstalledModule -Name Az -AllVersions | select Name,Version"
+      run: "Get-InstalledModule -Name Az -AllVersions -ErrorAction:SilentlyContinue | select Name,Version"
     - name: current directory
       shell: pwsh      
       run: "pwd;ls -alh"
