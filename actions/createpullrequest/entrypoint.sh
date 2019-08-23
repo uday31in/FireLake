@@ -1,6 +1,6 @@
 #!/bin/sh -l
-ls -alh
-printenv
+#ls -alh
+#printenv
 
 if [ -n "$(git status --porcelain)" ]; then
 
@@ -38,7 +38,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git status
 	
 	echo "git push"
-	git push
+	git push orging HEAD:$remote
 
 else
     echo "Git Working Tree Clean. Nothing to Commit"
