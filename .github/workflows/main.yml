@@ -80,7 +80,8 @@ jobs:
       run: "cd $GITHUB_WORKSPACE; pwd;ls -alh;cd .. ; ls -alh"
     - name: createpullrequest
       uses: ./actions/createpullrequest
+      uses: actions/checkout@v1   
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-      run: "uday"
+      
   
