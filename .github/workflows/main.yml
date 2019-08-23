@@ -63,10 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lin-pwsh]
     steps:
-    - uses: actions/checkout@v1
-    - uses: ./actions/createpullrequest
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v1    
     - name: printenv
       run: printenv
     - name: pwd
@@ -81,4 +78,9 @@ jobs:
       run: "echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE"      
     - name: change directory      
       run: "cd $GITHUB_WORKSPACE; pwd;ls -alh;cd .. ; ls -alh"
+    - name: createpullrequest
+      uses: ./actions/createpullrequest
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+      run: "uday"
   
