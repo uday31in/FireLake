@@ -9,14 +9,14 @@ if [ -n "$(git status --porcelain)" ]; then
 	
 	echo "configuring git config"
     #branchname=$(cat /proc/sys/kernel/random/uuid)
+	
+	git remote -v
 
     git config --global user.email 14359777+uday31in@users.noreply.github.com
     git config --global user.name uday31in
 	git config --global hub.protocol https
 	
 	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
-
-	git config -l
 
     remote="uday31in-patch-3"
     git ls-remote --exit-code --heads origin $remote
@@ -44,7 +44,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git status
 	
 	echo "git push -u "
-	git push -c http.extraheader="AUTHORIZATION: bearer $GITHUB_TOKEN" --set-upstream origin uday31in-patch-3
+	git push --set-upstream origin uday31in-patch-3
 	git push -u 
 
 else
