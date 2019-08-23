@@ -16,6 +16,8 @@ if [ -n "$(git status --porcelain)" ]; then
     git config --global user.name uday31in
 	git config --global hub.protocol https
 	
+	git remote add origin https://uday31in:$GITHUB_TOKEN@github.com/uday31in/FireLake.git
+	
 	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
 
     remote="uday31in-patch-3"
