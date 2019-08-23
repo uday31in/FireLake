@@ -5,8 +5,7 @@ on: [push,repository_dispatch]
 jobs:
   
   git:
-    runs-on: ubuntu-latest
-    needs: [lin-pwsh]
+    runs-on: ubuntu-latest    
     steps:
     - uses: actions/checkout@v1    
     - name: printenv
