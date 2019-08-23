@@ -22,6 +22,8 @@ jobs:
       run: "echo GITHUB_WORKSPACE: $GITHUB_WORKSPACE"      
     - name: change directory      
       run: "cd $GITHUB_WORKSPACE; pwd;ls -alh;cd .. ; ls -alh"
+    - name: tocuh file
+      run: "touch $GITHUB_WORKSPACE/test.txt"
     - name: createpullrequest
       uses: ./actions/createpullrequest      
       env:
