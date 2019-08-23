@@ -38,7 +38,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git status
 	
 	echo "git push"
-	git push orging HEAD:$remote
+	git push orgin HEAD:$remote
 
 else
     echo "Git Working Tree Clean. Nothing to Commit"
