@@ -3,61 +3,6 @@ name: CI
 on: [push,repository_dispatch]
 
 jobs:
-  win-build:
-    runs-on: windows-latest   
-    steps:
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: powershell
-      shell: powershell 
-      run: $PSVersionTable
-    - name: print enviornment variable
-      shell: powershell
-      run: "Get-ChildItem env:"
-    - name: get ps modules
-      shell: pwsh 
-      run: get-module -listavailable
-  
-  dumpcontext:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-   
-  lin-pwsh:
-    runs-on: ubuntu-latest
-    steps:   
-    - name: install az
-      shell: pwsh 
-      run: "#Set-PSRepository -Name PSGallery -InstallationPolicy Trusted ; Install-Module -Name Az -AllowClobber -Force; get-module -listavailable"
-    - name: get ps modules
-      shell: pwsh 
-      run: "Get-InstalledModule -Name Az -AllVersions -ErrorAction:SilentlyContinue | select Name,Version"
-    - name: current directory
-      shell: pwsh      
-      run: "pwd;ls -alh"
   
   git:
     runs-on: ubuntu-latest
@@ -80,7 +25,8 @@ jobs:
       run: "cd $GITHUB_WORKSPACE; pwd;ls -alh;cd .. ; ls -alh"
     - name: createpullrequest
       uses: ./actions/createpullrequest      
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       
   
