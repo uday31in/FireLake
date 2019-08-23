@@ -12,7 +12,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git config --global user.email {{GITHUB_CONTEXT.event.pusher.email }}
     git config --global user.name {{GITHUB_CONTEXT.event.pusher.name }}
 
-    remote="uday31in-patch-1"
+    remote="uday31in-patch-3"
     git ls-remote --exit-code --heads origin $remote
     if [ $? -eq 0 ]; then
         echo "branch $remote exists"
