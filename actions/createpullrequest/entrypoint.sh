@@ -12,11 +12,11 @@ if [ -n "$(git status --porcelain)" ]; then
 	
 	git remote -v
 
-    git config --global user.email 14359777+uday31in@users.noreply.github.com
-    git config --global user.name uday31in
-	git config --global hub.protocol https
+    #git config --global user.email 14359777+uday31in@users.noreply.github.com
+    #git config --global user.name uday31in
+	#git config --global hub.protocol https
 	
-	git remote add origin https://uday31in:$GITHUB_TOKEN@github.com/uday31in/FireLake.git
+	#git remote add origin https://uday31in:$GITHUB_TOKEN@github.com/uday31in/FireLake.git
 	
 	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
 
