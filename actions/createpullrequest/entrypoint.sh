@@ -44,7 +44,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git status
 	
 	echo "git push -u "
-	git push -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" --set-upstream origin uday31in-patch-3
+	git push -c http.extraheader="AUTHORIZATION: bearer $GITHUB_TOKEN" --set-upstream origin uday31in-patch-3
 	git push -u 
 
 else
