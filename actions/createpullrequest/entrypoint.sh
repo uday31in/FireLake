@@ -6,6 +6,9 @@ if [ -n "$(git status --porcelain)" ]; then
 
     echo "Git Working Tree is dirty"	
 	
+	echo "Git Branch"
+	git branch	
+	
 	echo "configuring git config"
     #branchname=$(cat /proc/sys/kernel/random/uuid)
 	
@@ -18,17 +21,19 @@ if [ -n "$(git status --porcelain)" ]; then
 	git remote set-url origin https://$REPO_ACCESS_TOKEN:x-oauth-basic@github.com/uday31in/FireLake.git
 	
 	git remote -v
-	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
-	git config -l	
 	
     remote="uday31in-patch-3"
     git ls-remote --exit-code --heads origin $remote
     if [ $? -eq 0 ]; then
         echo "branch $remote exists"
+		git add -A
+		git stash
         git checkout $remote
+		git stash pop
     else
         echo "branch $remote do not exists"
         git checkout -b $remote
+		git push --set-upstream origin $remote
     fi
     
     echo "git status"
@@ -46,9 +51,8 @@ if [ -n "$(git status --porcelain)" ]; then
     echo "git status"
     git status
 	
-	echo "git push -u "
-	git push --set-upstream origin uday31in-patch-3
-	git push -u 
+	echo "git push -u "	
+	git push
 
 else
     echo "Git Working Tree Clean. Nothing to Commit"
