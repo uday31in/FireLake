@@ -6,6 +6,11 @@ if [ -n "$(git status --porcelain)" ]; then
   
   echo "Git Working Tree is dirty"
   
+  branchname=$(cat /proc/sys/kernel/random/uuid)
+  
+  git config --global user.email {{GITHUB_CONTEXT.event.pusher.email }}
+  git config --global user.name {{GITHUB_CONTEXT.event.pusher.name }}
+  
   echo "git branch"
   git branch
   
