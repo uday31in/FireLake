@@ -5,7 +5,7 @@
 if [ -n "$(git status --porcelain)" ]; then
 
     echo "Git Working Tree is dirty"
-	git config -l
+	
 	
 	echo "configuring git config"
     #branchname=$(cat /proc/sys/kernel/random/uuid)
@@ -16,10 +16,13 @@ if [ -n "$(git status --porcelain)" ]; then
     git config --global user.name uday31in
 	#git config --global hub.protocol https
 	
-	git remote set-url origin https://uday31in:$REPO_ACCESS_TOKEN:x-oauth-basic@github.com/uday31in/FireLake.git
+	git remote set-url origin https://$REPO_ACCESS_TOKEN:x-oauth-basic@github.com/uday31in/FireLake.git
 	
+	git remote -v
 	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
-
+	git config -l
+	
+	
     remote="uday31in-patch-3"
     git ls-remote --exit-code --heads origin $remote
     if [ $? -eq 0 ]; then
