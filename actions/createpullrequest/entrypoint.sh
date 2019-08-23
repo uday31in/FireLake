@@ -6,6 +6,7 @@ if [ -n "$(git status --porcelain)" ]; then
 
     echo "Git Working Tree is dirty"
 
+	echo 
     #branchname=$(cat /proc/sys/kernel/random/uuid)
 
     git config --global user.email {{GITHUB_CONTEXT.event.pusher.email }}
@@ -37,7 +38,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git status
 	
 	echo "git push"
-	git push -u origin $remote
+	git push
 
 else
     echo "Git Working Tree Clean. Nothing to Commit"
