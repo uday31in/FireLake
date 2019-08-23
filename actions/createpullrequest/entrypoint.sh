@@ -38,6 +38,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git status
 	
 	echo "git push -u"
+	git push --set-upstream origin uday31in-patch-3
 	git push -u 
 
 else
