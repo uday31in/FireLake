@@ -19,8 +19,7 @@ if [ -n "$(git status --porcelain)" ]; then
 	
 	git remote -v
 	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
-	git config -l
-	
+	git config -l	
 	
     remote="uday31in-patch-3"
     git ls-remote --exit-code --heads origin $remote
