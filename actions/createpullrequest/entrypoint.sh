@@ -1,16 +1,17 @@
 #!/bin/sh -l
 #ls -alh
-#printenv
+printenv
 
 if [ -n "$(git status --porcelain)" ]; then
 
     echo "Git Working Tree is dirty"
 
-	echo 
+	echo "email"
     #branchname=$(cat /proc/sys/kernel/random/uuid)
 
-    git config --global user.email {{GITHUB_CONTEXT.event.pusher.email }}
-    git config --global user.name {{GITHUB_CONTEXT.event.pusher.name }}
+    git config --global user.email 14359777+uday31in@users.noreply.github.com
+    git config --global user.name uday31in
+	git config --global hub.protocol https
 
     remote="uday31in-patch-3"
     git ls-remote --exit-code --heads origin $remote
