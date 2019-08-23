@@ -1,6 +1,6 @@
-name: 'First interaction'
-description: 'Get started with Container actions'
-author: 'GitHub'
+name: 'Create Pull Request'
+description: 'Creates Pull Request if git status --porcelain is not null'
+author: 'uday31in'
 inputs:
   repo-token:
     description: 'Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}'
