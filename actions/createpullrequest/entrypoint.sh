@@ -13,6 +13,8 @@ if [ -n "$(git status --porcelain)" ]; then
     git config --global user.email 14359777+uday31in@users.noreply.github.com
     git config --global user.name uday31in
 	git config --global hub.protocol https
+	
+	git remote set-url origin git@github.com:uday31in/https://github.com/uday31in/FireLake.git
 
 	git config -l
 
