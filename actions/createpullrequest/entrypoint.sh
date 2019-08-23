@@ -1,6 +1,6 @@
 #!/bin/sh -l
 #ls -alh
-printenv
+#printenv
 
 if [ -n "$(git status --porcelain)" ]; then
 
@@ -14,7 +14,7 @@ if [ -n "$(git status --porcelain)" ]; then
     git config --global user.name uday31in
 	git config --global hub.protocol https
 	
-	git remote set-url origin git@github.com:uday31in/https://github.com/uday31in/FireLake.git
+	#git -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" push
 
 	git config -l
 
@@ -43,8 +43,8 @@ if [ -n "$(git status --porcelain)" ]; then
     echo "git status"
     git status
 	
-	echo "git push -u"
-	git push --set-upstream origin uday31in-patch-3
+	echo "git push -u "
+	git push -c http.extraheader="AUTHORIZATION: bearer $(GITHUB_TOKEN)" --set-upstream origin uday31in-patch-3
 	git push -u 
 
 else
