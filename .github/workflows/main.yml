@@ -79,8 +79,7 @@ jobs:
     - name: change directory      
       run: "cd $GITHUB_WORKSPACE; pwd;ls -alh;cd .. ; ls -alh"
     - name: createpullrequest
-      uses: ./actions/createpullrequest
-      uses: actions/checkout@v1   
+      uses: ./actions/createpullrequest      
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
       
