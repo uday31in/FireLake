@@ -4,8 +4,7 @@
 
 if [ -n "$(git status --porcelain)" ]; then
 
-    echo "Git Working Tree is dirty"
-	
+    echo "Git Working Tree is dirty"	
 	
 	echo "configuring git config"
     #branchname=$(cat /proc/sys/kernel/random/uuid)
