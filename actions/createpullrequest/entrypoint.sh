@@ -36,7 +36,7 @@ if [ -n "$(git status --porcelain)" ]; then
 		git push --set-upstream origin $remote
     fi
     
-    echo "git status"
+    echo "git status before"
     git status
 
     echo "git add ."
