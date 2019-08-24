@@ -25,7 +25,7 @@ jobs:
     - name: tocuh file
       run: "echo v1 > $GITHUB_WORKSPACE/test.txt"
     - name: print event data
-      run: cat GITHUB_EVENT_PATH
+      run: cat $GITHUB_EVENT_PATH
     - name: createpullrequest
       uses: ./actions/createpullrequest      
       env:
