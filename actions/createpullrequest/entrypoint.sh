@@ -26,9 +26,16 @@ if [ -n "$(git status --porcelain)" ]; then
     git ls-remote --exit-code --heads origin $remote
     if [ $? -eq 0 ]; then
         echo "branch $remote exists"
+		echo "adding current changes"
 		git add -A
+		
+		echo "stash current changes"
 		git stash
+		
+		echo "checkout $remote branch"
         git checkout $remote
+		
+		echo "pop stash "
 		git stash pop
     else
         echo "branch $remote do not exists"
