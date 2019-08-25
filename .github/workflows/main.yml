@@ -23,7 +23,7 @@ jobs:
     - name: change directory      
       run: "cd $GITHUB_WORKSPACE; pwd;ls -alh;cd .. ; ls -alh"
     - name: tocuh file
-      run: "echo v1 > $GITHUB_WORKSPACE/test.txt"
+      run: "#echo v1 > $GITHUB_WORKSPACE/test.txt"
     - name: print event data
       run: cat $GITHUB_EVENT_PATH
     - name: createpullrequest
